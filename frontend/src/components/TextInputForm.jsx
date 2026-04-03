@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BiasAnalysisResult } from './BiasAnalysisResult';
 import { LoadingSkeleton } from './LoadingSkeleton';
 import { useToast, ToastContainer } from './Toast';
+import { LiveBiasDetector } from './LiveBiasDetector';
 import { FiUpload, FiClipboard, FiCheck, FiAlertCircle, FiClock, FiDownload, FiTrendingUp } from 'react-icons/fi';
 
 const SAMPLE_TEXTS = {
@@ -214,6 +215,17 @@ export const TextInputForm = ({ onAnalysisComplete }) => {
               )}
             </AnimatePresence>
           </motion.div>
+
+          {/* LIVE BIAS DETECTOR */}
+          {text.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-4 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border-2 border-yellow-200"
+            >
+              <LiveBiasDetector text={text} />
+            </motion.div>
+          )}
         </div>
 
         {/* Action Buttons */}

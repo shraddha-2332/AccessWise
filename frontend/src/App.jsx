@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { TextInputForm } from './components/TextInputForm';
 import { EducationalPanel } from './components/EducationalPanel';
+import { ThemeToggle } from './components/ThemeToggle';
+import { ThemeProvider } from './context/ThemeContext';
 import './index.css';
 
 function App() {
@@ -13,6 +15,15 @@ function App() {
       ...prev
     ]);
   };
+
+  return (
+    <ThemeProvider>
+      <AppContent analysisHistory={analysisHistory} onAnalysisComplete={handleAnalysisComplete} />
+    </ThemeProvider>
+  );
+}
+
+function AppContent({ analysisHistory, onAnalysisComplete }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-900 to-slate-900">
