@@ -5,7 +5,8 @@ import { BiasAnalysisResult } from './BiasAnalysisResult';
 import { LoadingSkeleton } from './LoadingSkeleton';
 import { useToast, ToastContainer } from './Toast';
 import { LiveBiasDetector } from './LiveBiasDetector';
-import { FiUpload, FiClipboard, FiCheck, FiAlertCircle, FiClock, FiDownload, FiTrendingUp } from 'react-icons/fi';
+import { useKeyboardShortcuts, SHORTCUTS } from '../hooks/useKeyboardShortcuts';
+import { FiUpload, FiClipboard, FiCheck, FiAlertCircle, FiClock, FiDownload, FiTrendingUp, FiHelpCircle } from 'react-icons/fi';
 
 const SAMPLE_TEXTS = {
   GENERAL: "We're looking for young, energetic team members who can handle the fast pace. Must be able to work long hours without complaining.",
@@ -22,9 +23,16 @@ export const TextInputForm = ({ onAnalysisComplete }) => {
   const [loading, setLoading] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const [history, setHistory] = useState([]);
   const fileInputRef = useRef(null);
   const { toasts, addToast, removeToast } = useToast();
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts(
+    () => !loading && text.trim() && handleAnalyze(),
+    () => setText('')
+  );
 
   const handleAnalyze = async () => {
     if (text.trim().length === 0) {
@@ -135,14 +143,25 @@ export const TextInputForm = ({ onAnalysisComplete }) => {
               <span className="w-2 h-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></span>
               Content Type
             </label>
-            <motion.button
-              onClick={() => setShowHistory(!showHistory)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 px-3 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-all font-semibold text-sm"
-            >
-              <FiClock size={18} /> History ({history.length})
-            </motion.button>
+            <div className="flex items-center gap-2">
+              <motion.button
+                onClick={() => setShowHistory(!showHistory)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-2 px-3 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-all font-semibold text-sm"
+              >
+                <FiClock size={18} /> History ({history.length})
+              </motion.button>
+              <motion.button
+                onClick={() => setShowHelp(!showHelp)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-2 px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-all font-semibold text-sm"
+                title="Keyboard shortcuts"
+              >
+                <FiHelpCircle size={18} />
+              </motion.button>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -283,6 +302,30 @@ export const TextInputForm = ({ onAnalysisComplete }) => {
         <p className="text-center text-gray-600 text-sm font-medium mt-4">
           Max 5000 characters • Analysis takes 3-5 seconds • 100% private
         </p>
+
+        {/* Keyboard Shortcuts Help */}
+        <AnimatePresence>
+          {showHelp && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-4 p-4 bg-blue-50 rounded-xl border-2 border-blue-200"
+            >
+              <h3 className="font-bold text-blue-900 mb-3">⌨️ Keyboard Shortcuts</h3>
+              <div className="space-y-2">
+                {SHORTCUTS.map((shortcut, idx) => (
+                  <div key={idx} className="flex items-center justify-between text-sm">
+                    <span className="text-blue-700">{shortcut.description}</span>
+                    <kbd className="px-3 py-1 bg-blue-200 rounded font-mono font-bold text-blue-900">
+                      {shortcut.key}
+                    </kbd>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* History Panel */}
         <AnimatePresence>
