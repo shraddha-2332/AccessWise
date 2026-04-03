@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { FiChevronDown, FiChevronUp, FiCopy, FiArrowLeft, FiCheck } from 'react-icons/fi';
+import { FiChevronDown, FiChevronUp, FiCopy, FiArrowLeft, FiCheck, FiDownload } from 'react-icons/fi';
+import { AdvancedStats } from './AdvancedStats';
+import { ComparisonView } from './ComparisonView';
+import { AdvancedFilters } from './AdvancedFilters';
 
 const BIAS_COLORS = {
   gender: '#ec4899',
@@ -16,6 +19,8 @@ export const BiasAnalysisResult = ({ result, originalText, onNewAnalysis }) => {
   const [expandedBias, setExpandedBias] = useState(null);
   const [highlightedText, setHighlightedText] = useState(originalText);
   const [copiedIndex, setCopiedIndex] = useState(null);
+  const [filteredBiases, setFilteredBiases] = useState(result.biases);
+  const [viewMode, setViewMode] = useState('details');
 
   // Prepare data for charts
   const biasCountByCategory = {};
