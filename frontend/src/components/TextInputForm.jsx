@@ -1,13 +1,12 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { BiasAnalysisResult } from './BiasAnalysisResult';
-import { LoadingSpinner } from './LoadingSpinner';
-import { FiUpload, FiClipboard } from 'react-icons/fi';
+import { FiUpload, FiClipboard, FiCheck, FiAlertCircle } from 'react-icons/fi';
 
 export const TextInputForm = ({ onAnalysisComplete }) => {
   const [text, setText] = useState('');
-  const [contentType, setContentType] = useState('general');
+  const [contentType, setContentType] = useState('GENERAL');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [analysisResult, setAnalysisResult] = useState(null);
@@ -28,13 +27,14 @@ export const TextInputForm = ({ onAnalysisComplete }) => {
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:5000/api/bias/analyze', {
-        text,
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await axios.post(`${apiUrl}/api/bias-analysis/analyze`, {
+        text: text.trim(),
         contentType
       });
 
-      setAnalysisResult(response.data.data);
-      onAnalysisComplete?.(response.data.data);
+      setAnalysisResult(response.data);
+      onAnalysisComplete?.(response.data);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to analyze. Check backend is running.');
     } finally {
@@ -48,7 +48,7 @@ export const TextInputForm = ({ onAnalysisComplete }) => {
       setText(clipboardText);
       setError('');
     } catch (err) {
-      setError('Unable to access clipboard. Paste manually or ensure clipboard permissions.');
+      setError('Failed to read clipboard. Please paste manually.');
     }
   };
 
@@ -77,103 +77,141 @@ export const TextInputForm = ({ onAnalysisComplete }) => {
     );
   }
 
+  const contentTypes = ['GENERAL', 'JOB POSTING', 'ARTICLE', 'SOCIAL MEDIA', 'MARKETING', 'EDUCATION'];
+
   return (
-    <motion.div 
-      className="w-full max-w-4xl mx-auto"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+    <motion.div
+      className="bg-gradient-to-br from-white from-5% via-purple-50 to-blue-50 backdrop-blur-xl border border-white border-opacity-40 rounded-3xl p-10 max-w-3xl mx-auto shadow-2xl shadow-purple-500/20"
+      initial={{ opacity: 0, y: 30, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="bg-white rounded-lg shadow-lg p-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">Analyze Your Content</h2>
-        <p className="text-gray-600 mb-6">Paste or upload text to detect hidden biases</p>
-
-        {/* Content Type Selector */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Content Type</label>
-          <div className="flex gap-4 flex-wrap">
-            {['general', 'job-posting', 'article', 'social-media', 'marketing'].map((type) => (
-              <button
-                key={type}
-                onClick={() => setContentType(type)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  contentType === type
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {type.replace('-', ' ').toUpperCase()}
-              </button>
-            ))}
-          </div>
+      {/* Content Type Section */}
+      <div className="mb-8">
+        <label className="block text-gray-900 font-bold text-lg mb-4 flex items-center gap-2">
+          <span className="w-2 h-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></span>
+          Content Type
+        </label>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {contentTypes.map((type) => (
+            <motion.button
+              key={type}
+              onClick={() => setContentType(type)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`px-4 py-3 rounded-xl font-bold transition-all duration-300 text-sm ${
+                contentType === type
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/50'
+                  : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-purple-300'
+              }`}
+            >
+              {type}
+            </motion.button>
+          ))}
         </div>
+      </div>
 
-        {/* Text Input */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Paste or Upload Text (Max 5000 characters)
-          </label>
+      {/* Text Input Section */}
+      <div className="mb-6">
+        <label className="block text-gray-900 font-bold text-lg mb-3 flex items-center gap-2">
+          <span className="w-2 h-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></span>
+          Your Content
+        </label>
+        <motion.div className="relative">
           <textarea
             value={text}
             onChange={(e) => {
               setText(e.target.value);
               setError('');
             }}
-            placeholder="Paste job posting, article, or any text here..."
-            className="w-full h-48 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            placeholder="Paste job posting, article, social media post, or any text to analyze..."
+            className="w-full h-44 bg-white text-gray-900 placeholder-gray-400 border-2 border-gray-300 rounded-2xl p-5 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 resize-none font-medium text-base"
           />
-          <div className="mt-2 text-sm text-gray-500">
-            {text.length}/5000 characters
-          </div>
-        </div>
+          <AnimatePresence>
+            {text && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="absolute top-3 right-4 flex items-center gap-2 text-sm font-semibold text-gray-600"
+              >
+                <FiCheck className="text-green-500" /> {text.length}/5000
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-3 mb-6 flex-wrap">
-          <button
-            onClick={handlePaste}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-          >
-            <FiClipboard /> Paste from Clipboard
-          </button>
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-          >
-            <FiUpload /> Upload Text File
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".txt"
-            onChange={handleFileUpload}
-            className="hidden"
-          />
-        </div>
-
-        {/* Error Message */}
+      {/* Error Message */}
+      <AnimatePresence>
         {error && (
           <motion.div 
-            className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            className="mb-6 bg-red-50 border-2 border-red-400 rounded-xl p-4 text-red-700 flex items-start gap-3"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
           >
-            {error}
+            <FiAlertCircle className="text-red-500 mt-0.5 flex-shrink-0 text-lg" />
+            <span className="font-semibold">{error}</span>
           </motion.div>
         )}
+      </AnimatePresence>
 
-        {/* Analyze Button */}
-        <button
-          onClick={handleAnalyze}
-          disabled={loading || text.trim().length === 0}
-          className={`w-full py-3 px-4 rounded-lg font-bold text-white text-lg transition-colors ${
-            loading || text.trim().length === 0
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700'
-          }`}
+      {/* Action Buttons */}
+      <div className="grid grid-cols-2 gap-3 mb-6">
+        <motion.button
+          onClick={handlePaste}
+          disabled={loading}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/30"
         >
-          {loading ? <LoadingSpinner /> : 'Analyze for Bias'}
-        </button>
+          <FiClipboard size={20} /> Paste
+        </motion.button>
+        <motion.button
+          onClick={() => fileInputRef.current?.click()}
+          disabled={loading}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 disabled:opacity-50 text-white font-bold rounded-xl transition-all shadow-lg shadow-purple-500/30"
+        >
+          <FiUpload size={20} /> Upload
+        </motion.button>
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileUpload}
+          accept=".txt,.pdf,.doc,.docx"
+          className="hidden"
+        />
       </div>
+
+      {/* Main Analyze Button */}
+      <motion.button
+        onClick={handleAnalyze}
+        disabled={loading || !text.trim()}
+        whileHover={{ scale: 1.05, boxShadow: '0 20px 50px rgba(99, 102, 241, 0.4)' }}
+        whileTap={{ scale: 0.95 }}
+        className="w-full px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 disabled:opacity-50 text-white font-bold text-lg rounded-xl transition-all shadow-xl shadow-purple-500/40"
+      >
+        {loading ? (
+          <motion.div className="flex items-center justify-center gap-2">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity }}
+              className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+            />
+            Analyzing your content...
+          </motion.div>
+        ) : (
+          '✨ Analyze for Bias'
+        )}
+      </motion.button>
+
+      {/* Info Text */}
+      <p className="text-center text-gray-600 text-sm font-medium mt-4">
+        Max 5000 characters • Analysis takes 3-5 seconds • 100% private
+      </p>
     </motion.div>
   );
 };
