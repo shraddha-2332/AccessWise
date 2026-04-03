@@ -21,7 +21,11 @@ app.use('/api/bias', biasAnalysisRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'Backend is running!' });
+  res.json({
+    status: 'Language audit API is running',
+    aiEnhancementEnabled: Boolean(process.env.GEMINI_API_KEY),
+    allowedOrigin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  });
 });
 
 app.listen(PORT, () => {

@@ -1,201 +1,95 @@
 # Deployment Guide
 
-## 🚀 Quick Deployment (Recommended for Hackathon)
+## Architecture
 
-Both **Railway** (backend) and **Vercel** (frontend) offer **automatic deployments from GitHub**. Here's the simplest setup:
+- `frontend/` is a Vite React application.
+- `backend/` is an Express API.
+- The platform works without external AI keys using the built-in rule engine.
+- `GEMINI_API_KEY` is optional and only improves rewrite suggestions.
 
----
+## Environment Variables
 
-## Backend → Railway (Node.js)
+### Backend
 
-### 1. Create Railway Project
-1. Go to https://railway.app/
-2. Click "New Project"
-3. Select "Deploy from GitHub"
-4. Connect your GitHub account
-5. Select `bias-audit-platform` repository
+- `PORT=5000`
+- `FRONTEND_URL=https://your-frontend-domain.vercel.app`
+- `GEMINI_API_KEY=your_key_here` optional
 
-### 2. Configure Environment
-1. In Railway dashboard, go to "Variables"
-2. Add: `GEMINI_API_KEY=your_actual_key_here`
-3. Railway will auto-deploy on every push to `main` branch
+### Frontend
 
-### 3. Get Your Backend URL
-- Railway gives you a URL automatically
-- It will be something like: `https://bias-audit-backend.up.railway.app`
-- This is your `REACT_APP_API_URL` for frontend
+- `VITE_API_URL=https://your-backend-domain.up.railway.app`
 
----
+## Local Run
 
-## Frontend → Vercel (React)
+### Backend
 
-### 1. Add Vercel Configuration
-Create `frontend/vercel.json`:
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The frontend expects the API at `VITE_API_URL` and falls back to `http://localhost:5000`.
+
+## Deploy Backend on Railway
+
+1. Create a new Railway project from the GitHub repository.
+2. Set the root directory to `backend` if Railway asks.
+3. Add `FRONTEND_URL` and optionally `GEMINI_API_KEY`.
+4. Confirm the health endpoint responds at `/api/health`.
+
+Expected health response:
+
 ```json
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "env": {
-    "VITE_API_URL": "@vite_api_url"
-  }
+  "status": "Language audit API is running",
+  "aiEnhancementEnabled": false,
+  "allowedOrigin": "http://localhost:5173"
 }
 ```
 
-### 2. Create Vercel Project
-1. Go to https://vercel.com/
-2. Click "Add New" → "Project"
-3. Select "Import Git Repository"
-4. Select `bias-audit-platform`
-5. Select `frontend` as root directory
+## Deploy Frontend on Vercel
 
-### 3. Configure Environment
-1. In Vercel project settings, go to "Environment Variables"
-2. Add: `VITE_API_URL=https://your-railway-backend-url.com`
-3. Vercel will auto-deploy on every push to `main` branch
+1. Import the same repository into Vercel.
+2. Set the root directory to `frontend`.
+3. Add `VITE_API_URL` pointing to the Railway backend.
+4. Build command: `npm run build`
+5. Output directory: `dist`
 
-### 4. Update Frontend Code
-Edit `frontend/src/components/TextInputForm.jsx`:
+## CI Verification
 
-Find this line:
-```javascript
-const response = await axios.post('http://localhost:5000/api/bias/analyze', {
-```
-
-Replace with:
-```javascript
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const response = await axios.post(`${apiUrl}/api/bias/analyze`, {
-```
-
----
-
-## GitHub Actions CI/CD
-
-The included `.github/workflows/verify.yml` will:
-- ✅ Run on every push to `main`
-- ✅ Verify backend dependencies install
-- ✅ Verify frontend builds successfully
-- ✅ If build fails, GitHub shows the error (prevents broken deploys)
-
-**No secrets needed for this workflow!**
-
----
-
-## Manual Deployment (If Needed)
-
-### Deploy Backend Manually
-```bash
-cd backend
-# Build/test locally first
-npm install
-npm run dev  # Test it works
-
-# Then push to GitHub
-git add .
-git commit -m "Production ready"
-git push origin main
-# Railway will auto-deploy
-```
-
-### Deploy Frontend Manually
-```bash
-cd frontend
-# Build locally first
-npm install
-npm run build
-
-# Then push to GitHub
-git add .
-git commit -m "Production ready"
-git push origin main
-# Vercel will auto-deploy
-```
-
----
-
-## Testing Deployed Version
-
-After deployment:
-
-1. **Test Backend**
-   ```bash
-   curl https://your-railway-url.com/api/health
-   # Should return: { "status": "Backend is running!" }
-   ```
-
-2. **Test Frontend**
-   - Visit your Vercel URL
-   - Try analyzing some text
-   - Verify it connects to deployed backend
-
----
-
-## Troubleshooting Deployments
-
-### "Build failed on Railway"
-- Check: Backend `.env` has `GEMINI_API_KEY`
-- Check: No syntax errors in `server.js`
-- Solution: Fix locally, test with `npm run dev`, push again
-
-### "404 on Frontend"
-- Check: `VITE_API_URL` environment variable is set correctly
-- Check: Backend is actually deployed and running
-- Solution: Open browser console (F12) to see actual API errors
-
-### "CORS errors"
-- Ensure backend `CORS` origin includes your Vercel domain
-- Edit `backend/server.js`:
-  ```javascript
-  app.use(cors({
-    origin: [
-      'http://localhost:5173',
-      'https://your-vercel-domain.vercel.app'
-    ]
-  }));
-  ```
-
----
-
-## Speed Up Deployments
-
-### Railway Tips
-- Deployments take 1-2 minutes
-- Check logs in Railway dashboard
-- Auto-redeploy on every push to `main`
-
-### Vercel Tips
-- Deployments take 30-60 seconds
-- Creates preview deployments for pull requests
-- Automatic rollback if build fails
-
----
+The workflow at `.github/workflows/deploy.yml` installs dependencies and builds the frontend on every push to `main`.
 
 ## Production Checklist
 
-Before final submission:
+- Frontend can load `/api/health` from the deployed backend.
+- Running an audit returns a report from `/api/bias/analyze`.
+- History loads from `/api/bias/history`.
+- `FRONTEND_URL` matches the deployed frontend domain.
+- If `GEMINI_API_KEY` is omitted, the product still works with rule-based analysis.
 
-- [ ] Backend deployed on Railway with `GEMINI_API_KEY` set
-- [ ] Frontend deployed on Vercel with `VITE_API_URL` set
-- [ ] GitHub Actions workflow passing (green checkmark)
-- [ ] Frontend connects to backend successfully
-- [ ] Bias analysis works end-to-end
-- [ ] Live URLs tested and working
-- [ ] Demo video uses deployed URLs (optional but impressive)
-- [ ] Update README with deployed URLs
+## Troubleshooting
 
----
+### Frontend cannot reach backend
 
-## URLs for Submission
+- Verify `VITE_API_URL` is correct.
+- Verify the backend allows your deployed frontend via `FRONTEND_URL`.
+- Open the browser network tab and confirm requests go to `/api/bias/analyze`.
 
-After deployment, provide these to judges:
+### CORS errors
 
-```
-Frontend (Live): https://your-project.vercel.app
-Backend (API): https://your-backend.up.railway.app
-GitHub: https://github.com/your-username/bias-audit-platform
-Demo Video: https://youtube.com/watch?v=xxxxx
-```
+- Set `FRONTEND_URL` to the exact deployed frontend origin.
+- Redeploy the backend after changing environment variables.
 
----
+### No AI enhancement
 
-**That's it! Your app is deployed and auto-updating on every push!** 🎉
+- This is expected when `GEMINI_API_KEY` is missing.
+- Core analysis still works because the rules engine is local.

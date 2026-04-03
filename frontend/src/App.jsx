@@ -1,216 +1,154 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { FiActivity, FiFileText, FiShield, FiTarget } from 'react-icons/fi';
 import { TextInputForm } from './components/TextInputForm';
 import { EducationalPanel } from './components/EducationalPanel';
 import './index.css';
 
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 function App() {
   const [analysisHistory, setAnalysisHistory] = useState([]);
+  const [healthStatus, setHealthStatus] = useState('Checking service');
 
-  const handleAnalysisComplete = (result) => {
-    setAnalysisHistory(prev => [
-      { id: Date.now(), ...result },
-      ...prev
-    ]);
+  useEffect(() => {
+    const loadInitialData = async () => {
+      try {
+        const [healthResponse, historyResponse] = await Promise.all([
+          fetch(`${apiUrl}/api/health`),
+          fetch(`${apiUrl}/api/bias/history`),
+        ]);
+
+        if (healthResponse.ok) {
+          const health = await healthResponse.json();
+          setHealthStatus(health.status);
+        } else {
+          setHealthStatus('Service unavailable');
+        }
+
+        if (historyResponse.ok) {
+          const history = await historyResponse.json();
+          setAnalysisHistory(history.history || []);
+        }
+      } catch {
+        setHealthStatus('Offline - backend connection failed');
+      }
+    };
+
+    loadInitialData();
+  }, []);
+
+  const handleAnalysisComplete = (record) => {
+    setAnalysisHistory((prev) => [record, ...prev.filter((entry) => entry.id !== record.id)].slice(0, 10));
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-900 to-slate-900">
-      {/* Animated background elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          animate={{ 
-            scale: [1, 1.2, 1],
-            opacity: [0.1, 0.15, 0.1]
-          }}
-          transition={{ duration: 8, repeat: Infinity }}
-          className="absolute top-10 left-10 w-72 h-72 bg-blue-500 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{ 
-            scale: [1.2, 1, 1.2],
-            opacity: [0.1, 0.15, 0.1]
-          }}
-          transition={{ duration: 8, repeat: Infinity, delay: 2 }}
-          className="absolute bottom-10 right-10 w-72 h-72 bg-purple-500 rounded-full blur-3xl"
-        />
-      </div>
-
-      {/* Header */}
-      <motion.header 
-        className="relative bg-black bg-opacity-30 backdrop-blur-xl border-b border-purple-500 border-opacity-20 sticky top-0 z-50"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
-          <motion.div 
-            className="flex items-center gap-4"
-            whileHover={{ scale: 1.05 }}
-          >
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/50">
-              <span className="text-white font-bold text-xl">✓</span>
-            </div>
-            <div>
-              <h1 className="text-4xl font-black text-white bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">BiasAudit</h1>
-              <p className="text-purple-300 text-sm font-medium">AI-Powered Bias Detection</p>
-            </div>
-          </motion.div>
-          <motion.div className="hidden md:flex gap-6">
-            <a href="#features" className="text-purple-200 hover:text-white transition-colors">Features</a>
-            <a href="#learn" className="text-purple-200 hover:text-white transition-colors">Learn</a>
-            <a href="https://github.com/shraddha-2332/bias-audit-platform" target="_blank" rel="noopener noreferrer" className="text-purple-200 hover:text-white transition-colors">GitHub</a>
-          </motion.div>
-        </div>
-      </motion.header>
-
-      {/* Hero Section */}
-      <motion.section 
-        className="relative max-w-7xl mx-auto px-4 py-20"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
-        <div className="text-center mb-16">
-          <motion.h2 
-            className="text-6xl md:text-7xl font-black text-white mb-6 leading-tight"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            Detect Hidden Bias
-            <br />
-            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              in Seconds
-            </span>
-          </motion.h2>
-          <motion.p 
-            className="text-xl text-purple-200 max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            AI-powered platform that identifies gender, age, racial, disability, and socioeconomic biases in any text. Promote fairness and inclusive communication.
-          </motion.p>
-        </div>
-
-        {/* Main Form */}
-        <motion.div
-          initial={{ opacity: 0, y: 40, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-        >
-          <TextInputForm onAnalysisComplete={handleAnalysisComplete} />
-        </motion.div>
-
-        {/* Educational Panel */}
-        <motion.div 
-          className="mt-16"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-        >
-          <EducationalPanel />
-        </motion.div>
-
-        {/* Features Section */}
-        <motion.section 
-          id="features"
-          className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-        >
-          {[
-            {
-              icon: '🎯',
-              title: 'Multi-Type Detection',
-              description: 'Detects 6 types of bias: gender, age, racial, disability, socioeconomic, and ability bias'
-            },
-            {
-              icon: '💡',
-              title: 'Actionable Suggestions',
-              description: 'Get alternative, bias-free rewrites with one-click copy for immediate use'
-            },
-            {
-              icon: '📊',
-              title: 'Visual Analytics',
-              description: 'Beautiful dashboards showing bias breakdown by category and severity'
-            }
-          ].map((feature, idx) => (
-            <motion.div 
-              key={idx}
-              className="group"
-              whileHover={{ translateY: -8 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-            >
-              <div className="bg-white bg-opacity-5 backdrop-blur border border-purple-400 border-opacity-30 rounded-2xl p-8 hover:border-opacity-100 hover:bg-opacity-10 transition-all duration-300 h-full">
-                <div className="text-5xl mb-4">{feature.icon}</div>
-                <h3 className="text-2xl font-bold text-white mb-3">{feature.title}</h3>
-                <p className="text-purple-200 leading-relaxed">{feature.description}</p>
-              </div>
-            </motion.div>
-          ))}
-        </motion.section>
-
-        {/* Stats Section */}
-        <motion.section 
-          className="mt-24 grid grid-cols-1 md:grid-cols-4 gap-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.9 }}
-        >
-          {[
-            { label: 'Bias Types', value: '6' },
-            { label: 'Analysis Speed', value: '<5s' },
-            { label: 'Accuracy', value: '90%+' },
-            { label: 'Languages', value: 'English' }
-          ].map((stat, idx) => (
-            <motion.div
-              key={idx}
-              className="bg-gradient-to-br from-purple-500 to-pink-500 bg-opacity-10 backdrop-blur border border-purple-400 border-opacity-30 rounded-xl p-6 text-center"
-              whileHover={{ scale: 1.05 }}
-            >
-              <div className="text-4xl font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">{stat.value}</div>
-              <div className="text-purple-200 text-sm font-semibold mt-2">{stat.label}</div>
-            </motion.div>
-          ))}
-        </motion.section>
-      </motion.section>
-
-      {/* CTA Section */}
-      <motion.section 
-        className="relative max-w-4xl mx-auto px-4 py-20 text-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-      >
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 bg-opacity-20 backdrop-blur border border-purple-400 border-opacity-50 rounded-3xl p-12">
-          <h3 className="text-3xl font-bold text-white mb-3">Ready to Promote Fair Communication?</h3>
-          <p className="text-purple-200 mb-6">Start analyzing your content for hidden biases today</p>
-          <motion.a 
-            href="#"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="inline-block px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold rounded-xl hover:shadow-2xl hover:shadow-purple-500/50 transition-all"
-          >
-            Get Started Now ✨
-          </motion.a>
-        </div>
-      </motion.section>
-
-      {/* Footer */}
-      <footer className="relative bg-black bg-opacity-40 border-t border-purple-500 border-opacity-20 mt-24">
-        <div className="max-w-7xl mx-auto px-4 py-12 text-center text-purple-200">
-          <p className="font-semibold">BiasAudit Platform</p>
-          <p className="text-sm mt-2">Built for Frontend Development using AI 2026 Hackathon</p>
-          <p className="text-sm mt-2">Promoting fair and inclusive digital content • SDG 5, 10, 16</p>
-          <div className="flex justify-center gap-6 mt-6">
-            <a href="https://github.com/shraddha-2332/bias-audit-platform" target="_blank" rel="noopener noreferrer" className="text-purple-300 hover:text-white transition-colors">GitHub</a>
-            <a href="#" className="text-purple-300 hover:text-white transition-colors">Docs</a>
-            <a href="#" className="text-purple-300 hover:text-white transition-colors">Contact</a>
+    <div className="min-h-screen app-shell text-stone-100">
+      <div className="ambient-grid" />
+      <header className="border-b border-white/10 backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+          <div>
+            <p className="eyebrow">AI Trust Intelligence Platform</p>
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
+              Responsible Language Audit Workspace
+            </h1>
+          </div>
+          <div className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm text-emerald-200">
+            {healthStatus}
           </div>
         </div>
-      </footer>
+      </header>
+
+      <main className="mx-auto max-w-7xl px-6 py-10">
+        <section className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr]">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="card-panel p-8"
+          >
+            <p className="eyebrow">Real-world use case</p>
+            <h2 className="mt-3 max-w-3xl text-5xl font-semibold leading-tight text-white">
+              Audit job posts, public messaging, and education copy before bias becomes risk.
+            </h2>
+            <p className="mt-5 max-w-2xl text-lg leading-8 text-stone-300">
+              This product is designed for teams that publish language at scale and need a practical,
+              reviewable way to catch exclusionary phrasing, generate safer rewrites, and keep an audit trail.
+            </p>
+
+            <div className="mt-8 grid gap-4 md:grid-cols-2">
+              {[
+                {
+                  icon: <FiShield />,
+                  title: 'Working offline baseline',
+                  body: 'Rule-based detection always works, even when no external AI key is configured.',
+                },
+                {
+                  icon: <FiTarget />,
+                  title: 'Action-oriented reporting',
+                  body: 'Every audit returns rewrite guidance, prioritized actions, and a fairness checklist.',
+                },
+                {
+                  icon: <FiFileText />,
+                  title: 'Persistent review history',
+                  body: 'Analyses are stored locally so teams can revisit and compare previous audits.',
+                },
+                {
+                  icon: <FiActivity />,
+                  title: 'Built for operational teams',
+                  body: 'The workflow fits hiring, policy, marketing, and education review processes.',
+                },
+              ].map((item) => (
+                <div key={item.title} className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                  <div className="mb-4 inline-flex rounded-xl border border-white/10 bg-white/10 p-3 text-xl text-sky-200">
+                    {item.icon}
+                  </div>
+                  <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-stone-300">{item.body}</p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.aside
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="card-panel p-6"
+          >
+            <p className="eyebrow">Recent activity</p>
+            <div className="mt-4 space-y-4">
+              {analysisHistory.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-white/15 bg-white/5 p-5 text-sm text-stone-300">
+                  No saved audits yet. Run an analysis to start building an internal review trail.
+                </div>
+              ) : (
+                analysisHistory.slice(0, 5).map((entry) => (
+                  <div key={entry.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-sm uppercase tracking-[0.2em] text-sky-200">{entry.contentType}</p>
+                        <p className="mt-1 text-sm text-stone-300">{entry.textPreview}...</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-2xl font-semibold text-white">{entry.result?.overallBiasScore ?? '--'}</p>
+                        <p className="text-xs text-stone-400">{entry.result?.riskLevel ?? 'Unknown'}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </motion.aside>
+        </section>
+
+        <section className="mt-8">
+          <TextInputForm onAnalysisComplete={handleAnalysisComplete} history={analysisHistory} />
+        </section>
+
+        <section className="mt-8">
+          <EducationalPanel />
+        </section>
+      </main>
     </div>
   );
 }

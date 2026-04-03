@@ -1,100 +1,94 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { analyzeText } from '../utils/analysisEngine.js';
+import { readHistory, saveRecord } from '../utils/historyStore.js';
 
-const client = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const client = process.env.GEMINI_API_KEY
+  ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
+  : null;
 
-const BIAS_ANALYSIS_PROMPT = `You are an expert bias detection AI. Analyze the following text for hidden biases including:
-- Gender bias
-- Age/Ageism bias
-- Racial/Ethnic bias
-- Disability bias
-- Socioeconomic bias
-- Ability assumptions
-
-Return your analysis in this EXACT JSON format:
+const BIAS_ANALYSIS_PROMPT = `You are assisting a responsible-language audit product.
+Review the text and return strict JSON with:
 {
-  "overallBiasScore": <0-100>,
-  "riskLevel": "<LOW|MEDIUM|HIGH>",
-  "biases": [
-    {
-      "category": "<gender|age|racial|disability|socioeconomic|ability>",
-      "severity": "<low|medium|high>",
-      "biasedPhrase": "<exact phrase with bias>",
-      "explanation": "<why this is biased>",
-      "suggestedReplacement": "<neutral alternative>",
-      "startIndex": <position>,
-      "endIndex": <position>
-    }
-  ],
-  "summary": "<brief explanation of findings>",
-  "educationalTip": "<tip on how to avoid this bias>"
+  "replacements": {
+    "<biased phrase lowercased>": "<better alternative>"
+  }
 }
+Only suggest replacements for phrases that clearly need improvement.`;
 
-TEXT TO ANALYZE:
-`;
+async function getAiEnhancements(text) {
+  if (!client) {
+    return null;
+  }
+
+  try {
+    const model = client.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const response = await model.generateContent(`${BIAS_ANALYSIS_PROMPT}\n\n${text}`);
+    const responseText = response.response.text();
+    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+
+    return jsonMatch ? JSON.parse(jsonMatch[0]) : null;
+  } catch (error) {
+    console.warn('Gemini enhancement skipped:', error.message);
+    return null;
+  }
+}
 
 export const analyzeBias = async (req, res) => {
   try {
-    const { text, contentType } = req.body;
+    const { text, contentType, audience, intent } = req.body;
 
     if (!text || text.trim().length === 0) {
-      return res.status(400).json({ 
-        error: 'Text content is required' 
+      return res.status(400).json({
+        error: 'Text content is required',
       });
     }
 
     if (text.length > 5000) {
-      return res.status(400).json({ 
-        error: 'Text must be less than 5000 characters' 
+      return res.status(400).json({
+        error: 'Text must be less than 5000 characters',
       });
     }
 
-    // Call Gemini API
-    const model = client.getGenerativeModel({ model: 'gemini-pro' });
-    
-    const response = await model.generateContent(
-      BIAS_ANALYSIS_PROMPT + text
-    );
+    const aiInsights = await getAiEnhancements(text);
+    const analysisResult = analyzeText({
+      text,
+      contentType,
+      includeAiInsights: Boolean(aiInsights),
+      aiInsights,
+    });
 
-    const responseText = response.response.text();
-    
-    // Parse JSON from response
-    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error('Failed to parse AI response');
-    }
-
-    const analysisResult = JSON.parse(jsonMatch[0]);
-
-    // Save to history (optional - implement DB later)
     const analysisRecord = {
       id: Date.now().toString(),
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
       contentType: contentType || 'general',
+      audience: audience || 'General audience',
+      intent: intent || 'Bias and inclusion review',
       textPreview: text.substring(0, 100),
-      result: analysisResult
+      originalText: text,
+      result: analysisResult,
     };
+
+    await saveRecord(analysisRecord);
 
     res.json({
       success: true,
       data: analysisResult,
-      record: analysisRecord
+      record: analysisRecord,
     });
-
   } catch (error) {
     console.error('Bias analysis error:', error);
     res.status(500).json({
       error: 'Failed to analyze content',
-      message: error.message
+      message: error.message,
     });
   }
 };
 
 export const getAnalysisHistory = async (req, res) => {
   try {
-    // TODO: Implement database history retrieval
+    const history = await readHistory();
     res.json({
-      history: [],
-      message: 'History feature coming soon'
+      history,
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to retrieve history' });
@@ -129,8 +123,8 @@ export const getEducationalContent = async (req, res) => {
         'Focus on essential job requirements, not nice-to-haves',
         'Avoid gendered pronouns and refer to "team members" not "guys"',
         'Use plain language to reduce socioeconomic bias',
-        'Include accessibility statement to welcome diverse candidates'
-      ]
+        'Include accessibility statement to welcome diverse candidates',
+      ],
     };
 
     res.json(educationalContent);
