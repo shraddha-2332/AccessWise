@@ -3,7 +3,7 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import { BiasAnalysisResult } from './BiasAnalysisResult';
 import { LoadingSpinner } from './LoadingSpinner';
-import { FiUpload, FiPaste } from 'react-icons/fi';
+import { FiUpload, FiClipboard } from 'react-icons/fi';
 
 export const TextInputForm = ({ onAnalysisComplete }) => {
   const [text, setText] = useState('');
@@ -133,7 +133,7 @@ export const TextInputForm = ({ onAnalysisComplete }) => {
             onClick={handlePaste}
             className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
           >
-            <FiPaste /> Paste from Clipboard
+            <FiClipboard /> Paste from Clipboard
           </button>
           <button
             onClick={() => fileInputRef.current?.click()}
