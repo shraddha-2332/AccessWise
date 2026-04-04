@@ -2,13 +2,22 @@ import React from 'react';
 import { FiAlertTriangle, FiCheckCircle, FiCopy, FiDownload, FiUsers } from 'react-icons/fi';
 
 export function FindingsPanel({ result, metrics, originalText, onExport, onExportMarkdown }) {
+  const decisionClass = {
+    'Block before launch': 'decision-block',
+    'Needs inclusive redesign': 'decision-redesign',
+    'Ready with improvements': 'decision-ready',
+  }[result.releaseDecision] || 'decision-neutral';
+
   return (
     <section className="results">
-      <div className="panel">
+      <div className={`panel decision-panel ${decisionClass}`}>
         <div className="results-top">
           <div>
-            <p className="kicker">Decision</p>
-            <h3>{result.releaseDecision}</h3>
+            <p className="kicker">Service decision</p>
+            <div className="decision-heading">
+              <h3>{result.releaseDecision}</h3>
+              <span className="decision-pill">{result.releaseDecision}</span>
+            </div>
             <p className="results-summary">{result.executiveSummary}</p>
           </div>
           <div className="inline-actions">
@@ -35,6 +44,14 @@ export function FindingsPanel({ result, metrics, originalText, onExport, onExpor
             </div>
           ))}
         </div>
+
+        {result.playbook ? (
+          <div className="playbook-card">
+            <p className="kicker">Active playbook</p>
+            <h4>{result.playbook.title}</h4>
+            <p>{result.playbook.guidance}</p>
+          </div>
+        ) : null}
       </div>
 
       <div className="results-grid">
@@ -47,11 +64,11 @@ export function FindingsPanel({ result, metrics, originalText, onExport, onExpor
             {result.findings.length === 0 ? (
               <div className="finding-card success">
                 <strong>No major findings</strong>
-                <p>The draft is in good shape based on the current rule set.</p>
+                <p>The service copy is in good shape based on the current rule set.</p>
               </div>
             ) : (
               result.findings.map((item) => (
-                <article key={item.id} className="finding-card">
+                <article key={item.id} className={`finding-card severity-${item.severity}`}>
                   <div className="finding-head">
                     <span>{item.category}</span>
                     <strong>{item.severity}</strong>
@@ -88,6 +105,25 @@ export function FindingsPanel({ result, metrics, originalText, onExport, onExpor
 
           <div className="panel">
             <div className="section-title">
+              <FiUsers />
+              <h4>Persona simulation</h4>
+            </div>
+            <div className="impact-list">
+              {result.personaSimulations.map((item) => (
+                <div key={item.persona} className="impact-card persona-card">
+                  <div className="finding-head">
+                    <span>{item.persona}</span>
+                    <strong>{item.riskLevel}</strong>
+                  </div>
+                  <p><strong>Likely friction:</strong> {item.friction}</p>
+                  <p><strong>What to improve:</strong> {item.recommendation}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="panel">
+            <div className="section-title">
               <FiCheckCircle />
               <h4>Action plan</h4>
             </div>
@@ -96,7 +132,7 @@ export function FindingsPanel({ result, metrics, originalText, onExport, onExpor
                 <li key={item}>{item}</li>
               ))}
             </ul>
-            <h5 className="subheading">Review checklist</h5>
+            <h5 className="subheading">Audit checklist</h5>
             <ul className="plain-list">
               {result.reviewChecklist.map((item) => (
                 <li key={item}>{item}</li>
@@ -112,7 +148,7 @@ export function FindingsPanel({ result, metrics, originalText, onExport, onExpor
           <pre className="text-block">{originalText}</pre>
         </div>
         <div className="panel">
-          <p className="kicker">Suggested revision</p>
+          <p className="kicker">Suggested inclusive rewrite</p>
           <pre className="text-block">{result.rewrittenDraft}</pre>
         </div>
       </div>

@@ -22,9 +22,9 @@ export const analyzeBias = async (req, res) => {
     const analysisRecord = {
       id: Date.now().toString(),
       timestamp: new Date().toISOString(),
-      contentType: contentType || 'hiring',
-      audience: audience || 'General audience',
-      intent: intent || 'Pre-publication inclusion review',
+      contentType: contentType || 'scholarship',
+      audience: audience || 'Public-facing users',
+      intent: intent || 'Inclusive service audit before launch',
       textPreview: text.substring(0, 100),
       originalText: text,
       result: analysisResult,
@@ -59,9 +59,9 @@ export const getAnalysisStats = async (req, res) => {
   try {
     const history = await readHistory();
     const reviews = history.length;
-    const blocked = history.filter((entry) => entry.result?.releaseDecision === 'Block before publish').length;
-    const needsReview = history.filter((entry) => entry.result?.releaseDecision === 'Needs human review').length;
-    const ready = history.filter((entry) => entry.result?.releaseDecision === 'Ready with minor edits').length;
+    const blocked = history.filter((entry) => entry.result?.releaseDecision === 'Block before launch').length;
+    const needsReview = history.filter((entry) => entry.result?.releaseDecision === 'Needs inclusive redesign').length;
+    const ready = history.filter((entry) => entry.result?.releaseDecision === 'Ready with improvements').length;
 
     const categoryCounts = {};
     history.forEach((entry) => {
@@ -101,32 +101,32 @@ export const getEducationalContent = async (req, res) => {
       guides: [
         {
           id: 1,
-          title: 'Review the requirement, not the stereotype',
+          title: 'Design for task completion, not ideal users',
           content:
-            'Strong edits replace coded labels with the exact skill, support, or outcome the team means.',
-          category: 'review-principle',
+            'Strong service copy makes next steps obvious for first-time users instead of assuming confidence, speed, or prior experience.',
+          category: 'service-design',
         },
         {
           id: 2,
-          title: 'Accessibility should be explicit',
+          title: 'Accessibility and support should be visible',
           content:
-            'If a workflow supports accommodations, flexibility, remote work, or alternate channels, say that clearly instead of implying one ideal user.',
+            'If a service allows accommodations, translation, support staff, or alternate completion channels, the interface should say that clearly.',
           category: 'accessibility',
         },
         {
           id: 3,
-          title: 'Make review operational',
+          title: 'Inclusion should be operational',
           content:
-            'A credible system should tell teams what to change, who may be affected, and whether the draft is safe to publish.',
+            'A credible audit should tell teams what to change, who may be blocked, and whether the service is safe to launch.',
           category: 'operations',
         },
       ],
       tips: [
-        'Replace coded fit language with the exact requirement.',
-        'Remove class, age, or assimilation signals unless they are truly essential.',
-        'Name flexibility or accommodations when the workflow allows them.',
-        'Avoid deficit framing for candidates, customers, students, or employees.',
-        'Use a release decision so teams know whether to publish, review, or block the draft.',
+        'Break dense instructions into smaller task-focused steps.',
+        'State accommodation, translation, and support options early in the flow.',
+        'Reduce document and device assumptions unless they are truly essential.',
+        'Avoid shame-heavy or insider-only language for first-time users.',
+        'Use a launch decision so teams know whether to ship, redesign, or block the service.',
       ],
     });
   } catch (error) {

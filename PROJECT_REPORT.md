@@ -1,80 +1,78 @@
-# BiasAudit Hackathon Submission - Project Report
+# AccessWise Hackathon Submission - Project Report
 
 ## Problem Statement
 
 **The Challenge:**
-Hidden biases in written content perpetuate discrimination and exclusion. From job postings using gendered language to articles with implicit stereotypes, bias pervades professional and public communication. Most people don't recognize these biases, leading to unintentional discrimination.
+Essential digital services such as scholarship portals, healthcare booking systems, job application websites, civic service portals, and education platforms often exclude users through confusing instructions, high-pressure deadlines, document-heavy flows, language barriers, and inaccessible assumptions.
 
 **Real-World Impact:**
-- HR professionals unknowingly create biased job postings (gender, age bias)
-- Journalists reinforce stereotypes through language
-- Marketers exclude minorities with biased copywriting
-- Organizations face discrimination lawsuits due to biased communications
+- Students lose scholarship opportunities because instructions are dense or document requirements are unclear.
+- Patients struggle to complete appointment requests when service text assumes digital confidence or medical literacy.
+- Job applicants are filtered out by language, bandwidth, or device assumptions rather than merit.
+- Citizens face friction in public-service portals due to rigid, English-only, or smartphone-dependent workflows.
 
 **SDG Alignment:**
-- SDG 5: Gender Equality
+- SDG 4: Quality Education
 - SDG 10: Reduced Inequalities
-- SDG 16: Peace, Justice, and Strong Institutions
+- SDG 16: Peace, Justice and Strong Institutions
 
 ---
 
-## Solution: BiasAudit Platform
+## Solution: AccessWise
 
 **What It Does:**
-BiasAudit is an AI-powered SaaS platform that:
-1. Analyzes ANY text for hidden biases (gender, age, race, disability, socioeconomic)
-2. Highlights problematic phrases with explanations
-3. Suggests inclusive, bias-free rewrites
-4. Educates users on inclusive communication
+AccessWise is an inclusive service audit web application that:
+1. Reviews service copy and workflow instructions before launch
+2. Detects barriers across accessibility support, plain language, documentation burden, language inclusion, deadline pressure, and dignity/tone
+3. Gives a launch decision with actionable remediation guidance
+4. Helps teams redesign essential digital services for real users, especially first-time and underserved users
 
 **How It Works:**
-1. User pastes or uploads text
-2. Backend sends to Google Gemini AI with custom prompt
-3. AI returns structured analysis with:
-   - Bias score (0-100)
-   - Risk level (LOW / MEDIUM / HIGH)
-   - Detailed breakdown per bias type
-   - Suggested replacements
-   - Educational context
-4. Frontend visualizes results with charts, highlights, and suggestions
-5. User gets actionable insights to create fairer content
+1. A user selects a service track such as scholarship, healthcare, jobs, civic, or education
+2. The user pastes portal instructions, notices, or form copy
+3. The backend runs a structured inclusive-service audit using a deterministic rules engine
+4. The system returns:
+   - Risk score
+   - Launch decision
+   - Detailed findings
+   - Stakeholder impacts
+   - Action plan
+   - Suggested inclusive rewrite
+5. The frontend visualizes the results in an interactive audit dashboard
 
 ---
 
 ## Key Features
 
-### 1. Multi-Type Bias Detection
-- Gender bias (gendered language, stereotypes)
-- Age bias (discrimination, stereotyping)
-- Racial bias (ethnic discrimination)
-- Disability bias (ableist language)
-- Socioeconomic bias (class-based language)
-- Ability bias (physical/mental assumptions)
+### 1. Multi-Track Essential Service Audit
+- Scholarship portal review
+- Healthcare booking review
+- Job application review
+- Civic service review
+- Education portal review
 
-### 2. Interactive Analysis Dashboard
-- Beautiful bias score gauge (0-100)
-- Risk level classification
-- Category breakdown charts
-- Severity distribution visualization
+### 2. Interactive Audit Dashboard
+- Service decision summary
+- Risk score metrics
+- Findings cards with severity and explanation
+- Stakeholder impact panels
+- Action plan and audit checklist
 
-### 3. Actionable Suggestions
-- Exact problematic phrases highlighted
-- Clear explanation of bias
-- Alternative, neutral phrasing
-- One-click copy for suggestions
+### 3. Actionable Inclusion Guidance
+- Exact trigger phrases highlighted
+- Why each issue matters explained in plain language
+- Safer rewrite recommendations
+- Copy/export support for reports
 
-### 4. Educational Module
-- Learn about bias types
-- Real examples (before/after)
-- Tips for inclusive writing
-- Context for each detected bias
+### 4. Audit History and Portfolio Signals
+- Searchable saved audits
+- Aggregate stats for repeated barrier categories
+- Repeatable review workflow for teams
 
-### 5. Multiple Content Types
-- Job postings (HR focus)
-- News articles (journalism)
-- Social media posts
-- Marketing copy
-- General text
+### 5. Exportable Reports
+- JSON export
+- Markdown export
+- Submission and review-friendly output
 
 ---
 
@@ -82,184 +80,171 @@ BiasAudit is an AI-powered SaaS platform that:
 
 ### Frontend
 - **React 18** for UI
-- **Vite** for fast development
-- **Tailwind CSS** for styling
-- **Framer Motion** for animations
-- **Recharts** for data visualization
+- **Vite** for fast development and build
+- **CSS/Tailwind pipeline** for styling support
+- **Framer Motion** available for motion patterns
+- **React Icons** for interface clarity
 - **Axios** for API calls
 
 ### Backend
-- **Node.js Express** for REST API
-- **Google Generative AI (Gemini)** for analysis
+- **Node.js + Express** for REST API
+- **Rule-based audit engine** for deterministic analysis
+- **Local JSON history store** for saved audit trails
 - **CORS** for frontend integration
 
 ### Why This Stack?
-✅ Fast development (hackathon timeline)
-✅ Beautiful, responsive UI (judges focus on frontend)
-✅ Free/affordable APIs (budget-friendly)
-✅ Easy deployment (Vercel + Railway)
-✅ Scalable architecture
+- Fast to build during a hackathon
+- Strong frontend polish potential
+- No dependency on external paid AI APIs
+- Easy deployment to Vercel + Railway
+- Good foundation for future AI or ML extensions
 
 ---
 
-## AI Tools Used
+## AI / Intelligence Layer Used
 
-### Primary: Google Gemini API
-- **Why**: Fast, reliable, free tier available, multimodal support
-- **Usage**: Bias detection via structured prompts
-- **Prompt Structure**: Custom prompt asking AI to identify biases, rate severity, suggest fixes
-- **Response Format**: JSON for easy parsing and visualization
+### Current implementation
+AccessWise currently uses a deterministic inclusive-service audit engine that simulates decision support for essential digital services. It identifies risky patterns and produces structured, explainable audit outputs.
 
-### How AI Explainability Works
-The system doesn't just say "this is biased" - it:
-1. **Identifies** the problematic phrase
-2. **Explains** WHY it's biased (e.g., implicit stereotyping)
-3. **Suggests** neutral alternatives
-4. **Educates** with context (learning tips)
+### Why this is still strong for the hackathon
+- The system is transparent and explainable
+- Results are consistent and demo-safe
+- It avoids API dependency risk during judging
+- The architecture is ready for future AI expansion
 
-This transparency is key - judges love when AI reasoning is visible.
+### Future AI extension
+The next version can integrate an LLM to:
+- generate natural-language audit summaries
+- create persona-based explanations
+- suggest before/after service-copy rewrites
+- answer reviewer questions about flagged barriers
 
 ---
 
-## Business/Impact Model
+## Business / Impact Model
 
-### Current Users
-- HR departments (bias-proof job postings)
-- Content creators (ensure inclusive writing)
-- Journalists (avoid stereotypes)
-- Marketing teams (reach diverse audiences)
-- Educators (teach inclusive communication)
+### Target Users
+- Universities and scholarship administrators
+- Hospitals and healthcare service teams
+- Job and internship portal teams
+- Government and civic digital-service teams
+- NGOs and education platforms
+
+### Value Proposition
+AccessWise helps teams identify exclusion before launch instead of after user complaints, drop-off, or reputational damage.
 
 ### Revenue Models (Future)
-1. SaaS subscription (per-user/per-month)
-2. API tier system
-3. Enterprise licensing
-4. Educational institution bundles
+1. SaaS subscription for institutions
+2. Audit API for service platforms
+3. Enterprise compliance and accessibility reporting
+4. Sector-specific versions for education, healthcare, and public services
 
 ### Competitive Advantage
-- Only focused on BIAS (not generic misinformation)
-- Ethical AI mindset (judges love CSR)
-- Beautiful, intuitive UI
-- Educational value (not just detection)
-- Low competition (bias detection is niche)
+- Focused on essential services, not generic content scanning
+- Human-centered and impact-oriented
+- Explains who gets blocked, not just what is wrong
+- Strong frontend storytelling for audits and remediation
 
 ---
 
 ## Development Timeline
 
 ### Week 1
-- Backend API setup (Express + Gemini)
-- Frontend scaffold (React + Vite)
-- Core UI components
-- Basic bias detection endpoint
+- Existing project audit and architecture review
+- Product repositioning toward inclusive service auditing
+- Backend audit-engine redesign
+- Frontend experience rewrite
 
 ### Week 2
-- Enhanced UI/UX (animations, charts)
-- Educational panel
-- Multiple content type support
-- Testing & refinement
-- Deployment setup
-- Demo video creation
+- Documentation alignment
+- Deployment alignment
+- UI refinement
+- Demo and submission preparation
 
-### Actual Build Time
-- Project built in **2 weeks** by 1-2 developers
-- Ready for hackathon submission
-- Fully functional MVP
+### Actual Build Strategy
+- Built as a practical MVP by iterating on an existing full-stack foundation
+- Refocused into a clearer, more unique, more judge-friendly product
 
 ---
 
 ## Submission Deliverables
 
 ### 1. GitHub Repository
+```text
+https://github.com/shraddha-2332/accesswise
 ```
-https://github.com/[username]/bias-audit-platform
-```
-- Clean, well-organized code
-- Comprehensive README
-- .gitignore for sensitive files
-- Public repo for easy access
 
-### 2. Project Documentation (PDF)
-- This report (problem statement, solution, AI tools, features)
-- Deployment instructions
-- Architecture diagram
-- Future roadmap
+### 2. Project Documentation
+- Project report
+- Deployment guide
+- README
+- Demo script
 
 ### 3. Deployed Application
-- Frontend: Deployed on Vercel
-- Backend: Deployed on Railway/Render
-- Live demo at: [URL]
+- Frontend on Vercel
+- Backend on Railway
+- Live URLs to be updated after final rename/alignment
 
 ### 4. Demo Video (3-5 minutes)
-- Show homepage
-- Paste biased job posting
-- System analyzes in real-time
-- Show detected biases
-- Highlight suggestions
-- Show educational tips
-- Demonstrate charts/dashboards
+- Show homepage and value proposition
+- Run an audit on a scholarship or civic service flow
+- Explain the launch decision
+- Walk through findings, stakeholder impacts, and rewrite guidance
 
 ---
 
 ## Future Scope
 
-### Phase 2 (Post-Hackathon)
-- User accounts & history
-- Batch analysis API
-- Browser extension for Gmail/LinkedIn checking
-- Multi-language support
-- Advanced NLP models (custom training)
-- Team collaboration features
+### Phase 2
+- Persona-based audit modes for low-vision users, low-bandwidth users, older adults, and multilingual users
+- Shared database for history
+- Team workspaces and reviewer collaboration
+- Upload support for PDF notices and forms
 
-### Phase 3 (Scale)
-- Database (PostgreSQL/MongoDB)
-- Advanced analytics dashboard
-- Integration with existing tools (Slack, Microsoft 365)
-- API-as-a-service tier
-- ML model optimization
+### Phase 3
+- LLM-generated explanations and summaries
+- Visual service-flow redesign suggestions
+- WCAG-style scoring extensions
+- Integration with CMS and design systems
 
 ---
 
-## Why BiasAudit Wins This Hackathon
+## Why AccessWise Can Win This Hackathon
 
 | Judging Criteria | Why We Win |
 |-----------------|-----------|
-| **Innovation** | First to focus on ethical AI + bias detection specifically |
-| **Frontend Quality** | Beautiful animations, interactive charts, smooth UX |
-| **AI Integration** | Clear use of Gemini API with transparent reasoning |
-| **Real Problem** | Bias in communication is a REAL global problem |
-| **SDG Alignment** | Directly addresses SDG 5, 10, 16 |
-| **Feasibility** | Built in 2 weeks with free APIs—reproducible |
-| **Demo Impact** | Impressive live demo: paste text → see biases → get fixes |
-| **Social Impact** | Promotes fairness and inclusion—judges love social impact |
-| **Code Quality** | Clean architecture, scalable, production-ready |
-| **Uniqueness** | Low competition—most teams do chatbots or misinformation checkers |
+| **Innovation** | Reframes accessibility into an inclusive service audit for essential platforms |
+| **Frontend Quality** | Interactive audit dashboard with polished, product-like UX |
+| **AI/Intelligence Thinking** | Clear explainability, strong structured reasoning, future-ready AI layer |
+| **Real Problem** | Exclusion in digital services affects education, healthcare, jobs, and public access |
+| **Social Impact** | Strong inclusion and public-good framing |
+| **Uniqueness** | More original than generic chatbots, study apps, or resume tools |
+| **Practicality** | Easy for judges to understand and easy to demo convincingly |
+| **Code Quality** | Clean full-stack structure and deployable architecture |
 
 ---
 
 ## Competitive Landscape
 
-### Existing Solutions
-- Grammarly (grammar, not bias)
-- Copyscape (plagiarism, not bias)
-- AI writing assistants (general, not specialized)
+### Existing solutions
+- Generic accessibility scanners
+- WCAG compliance checkers
+- Website QA tools
 
-### Why BiasAudit is Better
-- **Specialized**: Only focuses on bias detection
-- **Explainable**: Shows WHY something is biased (not just a score)
-- **Actionable**: Suggests fair alternatives
-- **Educational**: Teaches users to recognize bias
-- **Beautiful**: Frontend is genuinely impressive
+### Why AccessWise is different
+- Focuses on essential digital service flows
+- Includes plain-language, dignity, language, and document-burden analysis
+- Designed for non-experts and public-serving teams
+- Pitches inclusion through task completion and service access, not only compliance
 
 ---
 
 ## Contact & Questions
 
-**Team**: [Your Name] & [Team Member Name]  
-**Email**: [your-email@email.com]  
-**GitHub**: [GitHub Profile]  
+**Team**: Shraddha Ukirade  
+**GitHub**: `shraddha-2332`  
 
 ---
 
 **Built for Frontend Development using AI 2026 Hackathon**
-**Promoting fair, inclusive digital communication** 🤝
+**Promoting accessible, inclusive, real-world digital services**

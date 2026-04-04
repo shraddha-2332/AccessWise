@@ -1,34 +1,35 @@
-# Inclusion Preflight
+# AccessWise
 
-Inclusion Preflight is a pre-publication review tool for teams that ship language at scale. It reviews hiring copy, policy text, marketing messaging, education content, and product UX text before publication and returns a release decision, stakeholder impacts, rewrite guidance, and an audit trail.
+AccessWise is an inclusive service audit web application built for essential digital services such as scholarship portals, healthcare booking flows, job applications, civic service websites, and education platforms. It reviews service copy and workflow instructions for accessibility, clarity, documentation burden, language inclusion, and first-time-user friction before launch.
 
-## What makes this different
+## Why this project stands out
 
-- It acts like a content release gate, not a generic bias demo.
-- It gives a clear decision: `Ready with minor edits`, `Needs human review`, or `Block before publish`.
-- It explains who is affected and why the wording creates risk.
-- It stores review history and portfolio-level stats so teams can spot recurring problem areas.
-- It works locally with a rule engine and does not require an external AI key.
+- It is positioned as an `inclusive service copilot`, not a generic accessibility checker.
+- It focuses on real high-impact flows where exclusion has consequences.
+- It gives a clear launch decision: `Ready with improvements`, `Needs inclusive redesign`, or `Block before launch`.
+- It explains who may be blocked and what to rewrite.
+- It stores audit history and portfolio-level stats for repeated review patterns.
+- It works locally with a deterministic rules engine and does not require an external AI key.
 
 ## Core features
 
-- Multi-track review flow for `hiring`, `policy`, `marketing`, `education`, and `product`.
-- Draft review with actionable findings and safer rewrite suggestions.
-- Stakeholder impact analysis for audience, compliance/reputation, and operations.
-- Action plan and review checklist for human sign-off.
-- Searchable saved review history.
-- Aggregate stats endpoint for blocked drafts, average risk, and top issue categories.
+- Multi-track audit flow for `scholarship`, `healthcare`, `jobs`, `civic`, and `education`.
+- Actionable findings for deadline pressure, accessibility support, plain language, documentation burden, language inclusion, and dignity/tone.
+- Stakeholder impact analysis for service users, trust/compliance, and operations/support.
+- Action plan and audit checklist for human review.
+- Searchable saved audit history.
+- Aggregate stats endpoint for blocked launches, redesign cases, average risk, and top issue categories.
 - Export reports as JSON or Markdown.
-- Backend-served guidance content rendered in the app.
+- Backend-served inclusion guidance rendered in the UI.
 
 ## Product workflow
 
-1. Choose a review track.
-2. Paste the draft under review.
-3. Run preflight.
-4. Review the release decision and flagged findings.
+1. Choose a service track.
+2. Paste the portal copy or service instructions.
+3. Run the inclusive audit.
+4. Review the launch decision and flagged barriers.
 5. Export the report or revise the draft.
-6. Use saved history and stats to identify recurring editorial risk patterns.
+6. Use saved history and stats to identify recurring exclusion patterns.
 
 ## Tech stack
 
@@ -45,28 +46,7 @@ Inclusion Preflight is a pre-publication review tool for teams that ship languag
 - Node.js
 - Express
 - File-backed local history store
-- Rule-based inclusion review engine
-
-## Project structure
-
-```text
-bias-audit-platform/
-├─ backend/
-│  ├─ controllers/
-│  ├─ routes/
-│  ├─ utils/
-│  ├─ server.js
-│  └─ package.json
-├─ frontend/
-│  ├─ src/
-│  │  ├─ components/
-│  │  ├─ App.jsx
-│  │  ├─ index.css
-│  │  └─ main.jsx
-│  └─ package.json
-├─ .github/workflows/deploy.yml
-└─ DEPLOYMENT_GUIDE.md
-```
+- Rule-based inclusive service audit engine
 
 ## API
 
@@ -76,24 +56,24 @@ Request:
 
 ```json
 {
-  "text": "We need a young rockstar engineer with flawless English.",
-  "contentType": "hiring",
-  "audience": "Applicants and candidates",
-  "intent": "Pre-publication inclusion review"
+  "text": "Only top students with perfect English and personal laptops should apply.",
+  "contentType": "scholarship",
+  "audience": "Students and first-time applicants",
+  "intent": "Inclusive service audit before launch"
 }
 ```
 
 ### `GET /api/bias/history`
 
-Returns saved review records.
+Returns saved audit records.
 
 ### `GET /api/bias/stats`
 
-Returns aggregate review metrics.
+Returns aggregate audit metrics.
 
 ### `GET /api/bias/education`
 
-Returns editorial guidance cards used by the frontend.
+Returns inclusion guidance cards used by the frontend.
 
 ### `GET /api/health`
 
@@ -127,6 +107,7 @@ The frontend uses `VITE_API_URL` when provided and falls back to `http://localho
 node --check backend/server.js
 node --check backend/controllers/biasController.js
 node --check backend/utils/analysisEngine.js
+node --check backend/utils/historyStore.js
 ```
 
 ### Frontend production build
@@ -142,13 +123,13 @@ See `DEPLOYMENT_GUIDE.md` for Railway + Vercel setup.
 
 ## Current limitations
 
-- Reviews are powered by a deterministic rules engine, so nuanced cases still benefit from human review.
+- The audits are powered by deterministic rules, so nuanced cases still benefit from human review.
 - History is stored locally in the backend data store, not a shared database.
 - Authentication and team-level permissions are not implemented yet.
 
 ## Next good upgrades
 
+- Persona-based audit modes for users with low vision, low bandwidth, or translation needs.
 - Shared database-backed history and team workspaces.
-- Reviewer annotations and approval states.
-- Domain-specific playbooks with custom policy packs.
-- File ingestion for Word or PDF review flows.
+- File ingestion for PDF or form-template review flows.
+- Visual before/after redesign suggestions for key service screens.

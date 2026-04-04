@@ -1,7 +1,10 @@
 import fs from 'fs/promises';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-const dataDirectory = path.resolve('backend', 'data');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const dataDirectory = path.resolve(__dirname, '..', 'data');
 const historyFile = path.join(dataDirectory, 'analysis-history.json');
 
 async function ensureStore() {

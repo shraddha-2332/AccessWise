@@ -1,109 +1,109 @@
 const PLAYBOOKS = {
-  hiring: {
-    title: 'Hiring and job post review',
+  scholarship: {
+    title: 'Scholarship and financial aid portal review',
     guidance:
-      'Focus on essential skills, remove coded fit language, and make accommodations and flexibility explicit.',
+      'Lower stress, reduce documentation confusion, and make deadlines, support paths, and device expectations explicit for first-time applicants.',
   },
-  policy: {
-    title: 'Policy and people operations review',
+  healthcare: {
+    title: 'Healthcare booking and patient intake review',
     guidance:
-      'Policy language should be clear, consistently applicable, and careful not to exclude people with disabilities, caregiving duties, or different socioeconomic realities.',
+      'Healthcare service text should be calm, medically understandable, and accessible to people who need help, translation, or more time.',
   },
-  marketing: {
-    title: 'Marketing and public messaging review',
+  jobs: {
+    title: 'Job application portal review',
     guidance:
-      'Segment by customer need or use case rather than identity stereotypes, and avoid prestige or worthiness framing.',
+      'Application instructions should focus on essential requirements, reasonable flexibility, and support for low-bandwidth or first-time applicants.',
+  },
+  civic: {
+    title: 'Civic and public service portal review',
+    guidance:
+      'Government-facing flows should be multilingual-ready, low-friction, and realistic for people without premium devices, digital payments, or prior system knowledge.',
   },
   education: {
-    title: 'Education and learner communication review',
+    title: 'Education service and learner portal review',
     guidance:
-      'Use asset-based language and describe support without framing learners or families as deficient.',
-  },
-  product: {
-    title: 'Product UX and in-app copy review',
-    guidance:
-      'Keep prompts respectful, accessible, and realistic for people with different abilities, bandwidth, and confidence levels.',
+      'Learner-facing platforms should reduce shame, explain steps clearly, and support students who need orientation or repeated guidance.',
   },
 };
 
 const ISSUE_RULES = [
   {
-    id: 'gender-coded-fit',
-    category: 'Hiring fairness',
+    id: 'time-pressure',
+    category: 'Deadline pressure',
     severity: 'high',
-    patterns: [/\b(rockstar|ninja|aggressive|dominant|salesman|manpower|guys)\b/gi],
-    title: 'Coded fit language may narrow who feels invited to apply',
+    patterns: [/\b(one session|one sitting|before midnight|immediately|without delay|automatically rejected|instant rejection)\b/gi],
+    title: 'The service copy creates high-pressure completion conditions',
     whyItMatters:
-      'These phrases often correlate with lower response rates from qualified applicants who do not identify with the implied persona.',
+      'Strict time pressure can lock out users with unstable internet, shared devices, caregiving duties, or accessibility needs.',
     stakeholderImpact:
-      'Job seekers may infer a preferred gender expression or workplace culture before they know the actual role expectations.',
+      'People who cannot complete the process quickly may abandon the service or lose access to an essential opportunity.',
     saferAlternative:
-      'Describe concrete outcomes, collaboration style, and required skills instead of using identity-coded shorthand.',
+      'Allow save-and-resume flows, state deadlines clearly, and mention what support exists if the process cannot be completed in one attempt.',
   },
   {
-    id: 'age-screening',
-    category: 'Age inclusion',
+    id: 'access-needs',
+    category: 'Accessibility support',
     severity: 'high',
-    patterns: [/\b(young|digital native|recent graduate|energetic youth|elderly|old-school)\b/gi],
-    title: 'Age-linked wording may create avoidable screening risk',
+    patterns: [/\b(without assistance|normal users|must be healthy|elderly people are expected|no exceptions|do not contact support)\b/gi],
+    title: 'The flow assumes every user can navigate the service without support',
     whyItMatters:
-      'Age-coded language can discourage qualified people and create legal or reputational exposure when the work itself is age-neutral.',
+      'Essential digital services should anticipate disability, low confidence, caregiver needs, and translation or support requirements.',
     stakeholderImpact:
-      'Applicants or readers may interpret the message as signaling who belongs, not what good performance looks like.',
+      'People who need accommodations or clarification may feel unwelcome before they even begin the process.',
     saferAlternative:
-      'State the actual skills, adaptability, or pace expectations without using age labels.',
+      'Mention help channels, accommodations, assistive options, and alternative completion paths in the service instructions.',
   },
   {
-    id: 'accessibility-assumption',
-    category: 'Accessibility',
-    severity: 'high',
-    patterns: [/\b(able-bodied|must be healthy|fast-paced|required thick skin|wheelchair-bound|normal person)\b/gi],
-    title: 'The wording assumes one default body, mind, or work style',
-    whyItMatters:
-      'This can exclude disabled, neurodivergent, or chronically ill people even when accommodations would make the work or service accessible.',
-    stakeholderImpact:
-      'People who need support may opt out early because the text suggests they would be seen as exceptions rather than expected users or contributors.',
-    saferAlternative:
-      'Describe the essential task and mention that accommodations, flexibility, or alternative workflows are available.',
-  },
-  {
-    id: 'class-signal',
-    category: 'Socioeconomic access',
+    id: 'readability-barrier',
+    category: 'Plain language',
     severity: 'medium',
-    patterns: [/\b(elite|polished background|top-tier upbringing|wealthy|luxury lifestyle|must own a car|unpaid trial)\b/gi],
-    title: 'Class signals may filter for privilege instead of suitability',
+    patterns: [/\b(full policy notice|medical terms|already know the process|perfectly|polished background|stable high-speed connection)\b/gi],
+    title: 'The service relies on prior knowledge or advanced reading confidence',
     whyItMatters:
-      'Requirements and brand language that assume money, transport, or social polish can shrink access for capable people.',
+      'Dense or insider language increases cognitive load and makes essential services harder to complete for new or stressed users.',
     stakeholderImpact:
-      'Candidates, customers, or students may feel the offer was designed for people with more resources than they have.',
+      'Users may misunderstand a step, submit the wrong information, or give up because the process feels written for insiders.',
     saferAlternative:
-      'Keep the requirement tied to the task itself and avoid prestige language unless it is genuinely essential.',
+      'Use shorter instructions, explain specialized terms, and break the process into plain-language steps with examples.',
   },
   {
-    id: 'racialized-language',
-    category: 'Race and ethnicity',
+    id: 'documentation-burden',
+    category: 'Documentation burden',
+    severity: 'medium',
+    patterns: [/\b(all documents|every certificate|attach all documents perfectly|digital payment access|personal laptops)\b/gi],
+    title: 'The service appears to require privileged tools or perfect document readiness',
+    whyItMatters:
+      'People using community devices, shared scanners, or incomplete records may be shut out even when they are eligible.',
+    stakeholderImpact:
+      'Users can be screened out by logistics rather than true eligibility, especially in low-resource or rural contexts.',
+    saferAlternative:
+      'Clarify which documents are essential, allow staged uploads when possible, and suggest fallback channels for missing materials.',
+  },
+  {
+    id: 'language-exclusion',
+    category: 'Language inclusion',
     severity: 'high',
-    patterns: [/\b(native english speaker|clean accent|foreigner|immigrant students|culturally fit|minority candidate|exotic)\b/gi],
-    title: 'Identity-referential wording may create racial or nationality bias',
+    patterns: [/\b(perfect English|clean accent|in English|English only)\b/gi],
+    title: 'The service expects one language standard or accent norm',
     whyItMatters:
-      'The phrasing can imply a default identity standard or treat people from certain groups as outsiders.',
+      'Language-heavy essential services can exclude multilingual users or people who understand the process better in another language.',
     stakeholderImpact:
-      'Readers may receive the message that belonging depends on assimilation or a preferred background rather than contribution.',
+      'Applicants may interpret the service as designed for insiders with stronger language privilege, not for everyone eligible.',
     saferAlternative:
-      'Specify the exact communication need or support concern without referring to identity groups as the issue.',
+      'Offer multilingual guidance, use simple language, and separate true communication requirements from avoidable language gatekeeping.',
   },
   {
-    id: 'deficit-framing',
+    id: 'shame-framing',
     category: 'Dignity and tone',
     severity: 'medium',
-    patterns: [/\b(struggle with|not for beginners|only a genius|underprivileged homes|hand-holding|without complaint)\b/gi],
-    title: 'The draft frames people through deficit, shame, or unrealistic expectations',
+    patterns: [/\b(slow learners|beginners may struggle|should already know|avoid asking for repeated clarification)\b/gi],
+    title: 'The service copy frames support-seeking users as a problem',
     whyItMatters:
-      'Even when unintentional, deficit framing lowers trust and can make the organization feel unsafe or dismissive.',
+      'People are less likely to seek help when the interface suggests that confusion or repeated questions are a personal failure.',
     stakeholderImpact:
-      'The audience may feel judged before they understand the offer, policy, or learning environment.',
+      'Students, patients, and citizens can disengage from essential systems that make them feel judged or behind.',
     saferAlternative:
-      'Use respectful, specific language that explains support, standards, and expectations without belittling people.',
+      'Use supportive language that normalizes questions, orientation, and step-by-step guidance.',
   },
 ];
 
@@ -145,33 +145,81 @@ function rewriteDraft(text, findings) {
 function buildStakeholderImpacts(findings) {
   return [
     {
-      stakeholder: 'Primary audience',
+      stakeholder: 'Service users',
       level: findings.some((item) => item.severity === 'high') ? 'high' : findings.length ? 'medium' : 'low',
       summary:
         findings.length === 0
-          ? 'The draft is unlikely to alienate the intended audience based on the current rule set.'
-          : 'Some people may feel screened out or judged before they understand the real opportunity or policy.',
+          ? 'The service copy is unlikely to block the intended audience based on the current rule set.'
+          : 'Some people may be locked out, confused, or discouraged before they complete the core task.',
     },
     {
-      stakeholder: 'Compliance and reputation',
-      level: findings.some((item) => item.category === 'Hiring fairness' || item.category === 'Age inclusion') ? 'high' : findings.length ? 'medium' : 'low',
+      stakeholder: 'Trust and compliance',
+      level:
+        findings.some((item) => item.category === 'Accessibility support' || item.category === 'Language inclusion')
+          ? 'high'
+          : findings.length
+            ? 'medium'
+            : 'low',
       summary:
         findings.length === 0
-          ? 'No major wording-based compliance signals were detected.'
-          : 'The wording creates avoidable fairness and reputational risk if published without review.',
+          ? 'No major trust or accessibility signals were detected.'
+          : 'The launch creates avoidable inclusion and reputation risk if shipped without remediation.',
     },
     {
-      stakeholder: 'Operational teams',
+      stakeholder: 'Operations and support',
       level: findings.length >= 4 ? 'high' : findings.length >= 2 ? 'medium' : 'low',
       summary:
         findings.length === 0
           ? 'Minimal remediation effort should be required.'
-          : 'Publishing as-is could generate unnecessary candidate drop-off, support burden, or revision work later.',
+          : 'Shipping as-is could create extra drop-off, support requests, manual follow-up, and preventable escalation.',
     },
   ];
 }
 
-export function analyzeText({ text, contentType = 'hiring' }) {
+function buildPersonaSimulations(findings, contentType) {
+  const hasCategory = (category) => findings.some((item) => item.category === category);
+  const hasHighSeverity = findings.some((item) => item.severity === 'high');
+
+  const personas = [
+    {
+      persona: 'First-time applicant',
+      friction: hasCategory('Plain language') || hasCategory('Documentation burden')
+        ? 'The flow feels written for insiders and may be hard to finish without repeated clarification.'
+        : 'The flow is understandable enough for a new user with basic orientation.',
+      riskLevel: hasCategory('Plain language') || hasCategory('Documentation burden') ? 'medium' : 'low',
+      recommendation: 'Break the process into simpler steps and show what is required before asking users to submit.',
+    },
+    {
+      persona: 'Low-bandwidth or shared-device user',
+      friction: hasCategory('Deadline pressure') || hasCategory('Documentation burden')
+        ? 'Rigid timing, large document expectations, or one-session completion rules can block this user completely.'
+        : 'The current copy does not strongly signal technical exclusion for this user.',
+      riskLevel: hasCategory('Deadline pressure') || hasCategory('Documentation burden') ? 'high' : 'low',
+      recommendation: 'Add save-and-resume, reduce upload pressure, and provide fallback channels when digital completion fails.',
+    },
+    {
+      persona: contentType === 'healthcare' ? 'Patient needing support' : 'Translation-dependent user',
+      friction:
+        hasCategory('Language inclusion') || hasCategory('Accessibility support')
+          ? 'This person may not trust the flow or may stop early because support and language clarity are not visible.'
+          : 'This user appears to have a workable path if support remains visible in the final interface.',
+      riskLevel:
+        hasCategory('Language inclusion') || hasCategory('Accessibility support')
+          ? 'high'
+          : hasHighSeverity
+            ? 'medium'
+            : 'low',
+      recommendation:
+        contentType === 'healthcare'
+          ? 'Show support options early, reduce jargon, and make assisted completion feel normal.'
+          : 'Offer multilingual cues, simpler wording, and visible help paths instead of assuming strong English confidence.',
+    },
+  ];
+
+  return personas;
+}
+
+export function analyzeText({ text, contentType = 'scholarship' }) {
   const normalizedText = text.trim();
   const sentences = splitSentences(normalizedText);
   const findings = [];
@@ -200,12 +248,12 @@ export function analyzeText({ text, contentType = 'hiring' }) {
   const totalRisk = Math.min(100, findings.reduce((sum, item) => sum + severityWeight[item.severity], 0));
   const releaseDecision =
     findings.some((item) => item.severity === 'high') || totalRisk >= 65
-      ? 'Block before publish'
+      ? 'Block before launch'
       : totalRisk >= 28
-        ? 'Needs human review'
-        : 'Ready with minor edits';
+        ? 'Needs inclusive redesign'
+        : 'Ready with improvements';
 
-  const playbook = PLAYBOOKS[contentType] || PLAYBOOKS.hiring;
+  const playbook = PLAYBOOKS[contentType] || PLAYBOOKS.scholarship;
   const issueMix = [...new Set(findings.map((item) => item.category))];
 
   return {
@@ -213,31 +261,32 @@ export function analyzeText({ text, contentType = 'hiring' }) {
     releaseDecision,
     executiveSummary:
       findings.length === 0
-        ? `The draft is broadly aligned with the ${playbook.title.toLowerCase()} playbook and does not show major wording-based fairness risks.`
-        : `This draft raises ${findings.length} publication issue${findings.length > 1 ? 's' : ''} across ${issueMix.length} risk area${issueMix.length > 1 ? 's' : ''}. The strongest concerns are ${issueMix.slice(0, 2).join(' and ')}.`,
+        ? `The service copy is broadly aligned with the ${playbook.title.toLowerCase()} playbook and does not show major inclusion barriers.`
+        : `This service flow raises ${findings.length} inclusion issue${findings.length > 1 ? 's' : ''} across ${issueMix.length} risk area${issueMix.length > 1 ? 's' : ''}. The strongest barriers are ${issueMix.slice(0, 2).join(' and ')}.`,
     findings,
     stakeholderImpacts: buildStakeholderImpacts(findings),
+    personaSimulations: buildPersonaSimulations(findings, contentType),
     actionPlan: findings.length
       ? [
-          'Replace identity-coded or deficit-oriented phrases with specific role, policy, or audience needs.',
-          'Add accommodations, flexibility, or support language where the current draft assumes one default user.',
-          'Run a final human review focused on the highest-risk categories before publishing.',
+          'Rewrite the highest-friction instructions in plain language with shorter steps and calmer tone.',
+          'Add explicit support paths, accommodations, and fallback channels for users who cannot complete the default digital flow.',
+          'Review the launch with a human lens focused on first-time users, accessibility needs, and low-resource access.',
         ]
       : [
-          'Keep the review checklist in place for future edits.',
-          'Validate with a domain reviewer if the content is especially sensitive or regulated.',
+          'Keep the audit checklist in place for future service updates.',
+          'Validate with a domain reviewer if the service handles especially sensitive, regulated, or high-stakes decisions.',
         ],
     rewrittenDraft: rewriteDraft(normalizedText, findings),
     reviewChecklist: [
-      'Does the wording describe the requirement, not the person you assume will succeed?',
-      'Could someone with different abilities, age, background, or resources still see themselves included?',
-      'Are support, flexibility, or accommodations named where relevant?',
-      'Would this draft still feel respectful if read by the people most affected by it?',
+      'Could a first-time user finish the service without prior insider knowledge?',
+      'Are support channels, accommodations, and alternative paths clearly visible?',
+      'Does the language avoid shame, pressure, and unnecessary complexity?',
+      'Would someone with low bandwidth, shared devices, or translation needs still have a fair path to completion?',
     ],
     playbook,
     meta: {
       reviewedAt: new Date().toISOString(),
-      analyzer: 'inclusion-preflight-rules-engine',
+      analyzer: 'accesswise-inclusive-service-engine',
       contentType,
     },
   };

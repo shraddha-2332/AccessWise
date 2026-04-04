@@ -120,6 +120,80 @@ textarea {
   gap: 24px;
 }
 
+.showcase {
+  max-width: 1440px;
+  margin: 0 auto 24px;
+  display: grid;
+  grid-template-columns: 1.2fr 0.85fr 0.85fr;
+  gap: 18px;
+  position: relative;
+  z-index: 1;
+}
+
+.showcase-panel {
+  border-radius: 28px;
+  padding: 22px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.62));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 24px 60px rgba(2, 6, 23, 0.22);
+}
+
+.showcase-story {
+  background:
+    radial-gradient(circle at top left, rgba(14, 165, 233, 0.16), transparent 40%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.86), rgba(15, 23, 42, 0.62));
+}
+
+.showcase-panel h2,
+.showcase-panel strong,
+.track-banner h3 {
+  margin: 10px 0 8px;
+}
+
+.showcase-panel p,
+.signal-list p,
+.microcopy-card p {
+  font-family: "Segoe UI", sans-serif;
+  color: #dbe4f0;
+  line-height: 1.7;
+}
+
+.tag-cloud,
+.signal-list,
+.track-pills,
+.microcopy-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.tag-cloud {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.tag-cloud span,
+.track-pills span {
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: "Segoe UI", sans-serif;
+  color: #eff6ff;
+}
+
+.signal-list div,
+.microcopy-card {
+  border-radius: 20px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.signal-list strong,
+.microcopy-card strong {
+  display: block;
+  font-size: 1rem;
+}
+
 .workspace,
 .rail,
 .knowledge-rail,
@@ -160,6 +234,21 @@ textarea {
   line-height: 1.7;
 }
 
+.track-banner {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.track-banner h3 {
+  font-size: 1.35rem;
+}
+
+.track-pills {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .hero-badges {
   display: flex;
   flex-wrap: wrap;
@@ -186,6 +275,72 @@ textarea {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
+}
+
+.scenario-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.scenario-header h3 {
+  margin: 10px 0 0;
+  font-size: 1.35rem;
+}
+
+.scenario-note {
+  max-width: 320px;
+  margin: 0;
+  color: #cbd5e1;
+  font-family: "Segoe UI", sans-serif;
+  line-height: 1.6;
+}
+
+.scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.scenario-card {
+  text-align: left;
+  border-radius: 22px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+  cursor: pointer;
+}
+
+.scenario-card span {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  color: #7dd3fc;
+}
+
+.scenario-card strong {
+  display: block;
+  margin: 10px 0 8px;
+  font-size: 1rem;
+}
+
+.scenario-card p {
+  margin: 0;
+  color: #dbe4f0;
+  font-family: "Segoe UI", sans-serif;
+  line-height: 1.6;
+}
+
+.scenario-card-active {
+  border-color: rgba(125, 211, 252, 0.34);
+  background:
+    radial-gradient(circle at top left, rgba(14, 165, 233, 0.14), transparent 42%),
+    rgba(255, 255, 255, 0.05);
 }
 
 .form-grid label,
@@ -222,6 +377,19 @@ textarea {
   min-height: 280px;
   resize: vertical;
   line-height: 1.75;
+}
+
+.microcopy-grid {
+  margin-top: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.microcopy-card span {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  color: #7dd3fc;
 }
 
 .actions,
@@ -274,6 +442,67 @@ textarea {
   font-size: 2rem;
 }
 
+.decision-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.decision-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.decision-block::after {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), transparent 45%);
+}
+
+.decision-redesign::after {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), transparent 45%);
+}
+
+.decision-ready::after {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), transparent 45%);
+}
+
+.decision-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.decision-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-family: "Segoe UI", sans-serif;
+  font-size: 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.decision-block .decision-pill {
+  color: #fecaca;
+  border-color: rgba(248, 113, 113, 0.35);
+  background: rgba(127, 29, 29, 0.35);
+}
+
+.decision-redesign .decision-pill {
+  color: #fde68a;
+  border-color: rgba(251, 191, 36, 0.35);
+  background: rgba(120, 53, 15, 0.35);
+}
+
+.decision-ready .decision-pill {
+  color: #bbf7d0;
+  border-color: rgba(74, 222, 128, 0.35);
+  background: rgba(20, 83, 45, 0.35);
+}
+
 .compact-panel {
   padding-top: 18px;
   padding-bottom: 18px;
@@ -305,6 +534,30 @@ textarea {
   padding: 18px;
 }
 
+.persona-card {
+  background:
+    radial-gradient(circle at top right, rgba(14, 165, 233, 0.08), transparent 35%),
+    rgba(255, 255, 255, 0.04);
+}
+
+.severity-high {
+  border-color: rgba(248, 113, 113, 0.32);
+  background:
+    linear-gradient(180deg, rgba(127, 29, 29, 0.16), rgba(255, 255, 255, 0.03));
+}
+
+.severity-medium {
+  border-color: rgba(251, 191, 36, 0.28);
+  background:
+    linear-gradient(180deg, rgba(120, 53, 15, 0.14), rgba(255, 255, 255, 0.03));
+}
+
+.severity-low {
+  border-color: rgba(74, 222, 128, 0.24);
+  background:
+    linear-gradient(180deg, rgba(20, 83, 45, 0.12), rgba(255, 255, 255, 0.03));
+}
+
 .metric-card span {
   display: block;
   text-transform: uppercase;
@@ -317,6 +570,26 @@ textarea {
   display: block;
   margin-top: 12px;
   font-size: 1.2rem;
+}
+
+.playbook-card {
+  margin-top: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(249, 115, 22, 0.08));
+  padding: 18px;
+}
+
+.playbook-card h4 {
+  margin: 10px 0 8px;
+  font-size: 1.15rem;
+}
+
+.playbook-card p:last-child {
+  margin: 0;
+  color: #dbe4f0;
+  font-family: "Segoe UI", sans-serif;
+  line-height: 1.7;
 }
 
 .results-grid {
@@ -432,13 +705,23 @@ textarea {
 }
 
 @media (max-width: 1100px) {
+  .showcase,
   .layout,
   .results-grid {
     grid-template-columns: 1fr;
   }
 
+  .track-banner,
+  .scenario-header,
   .metric-grid,
   .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .scenario-grid,
+  .microcopy-grid,
+  .tag-cloud,
+  .track-pills {
     grid-template-columns: 1fr 1fr;
   }
 }
@@ -449,6 +732,8 @@ textarea {
   }
 
   .topbar,
+  .track-banner,
+  .scenario-header,
   .hero-panel,
   .actions,
   .results-top,
@@ -457,6 +742,11 @@ textarea {
     align-items: flex-start;
   }
 
+  .showcase,
+  .scenario-grid,
+  .microcopy-grid,
+  .tag-cloud,
+  .track-pills,
   .form-grid,
   .metric-grid {
     grid-template-columns: 1fr;

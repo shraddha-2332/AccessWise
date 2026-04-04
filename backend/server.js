@@ -21,12 +21,12 @@ app.use('/api/bias', biasAnalysisRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({
-    status: 'Inclusion Preflight API is running',
-    analyzer: 'inclusion-preflight-rules-engine',
+    status: 'AccessWise inclusive audit API is running',
+    analyzer: 'accesswise-inclusive-service-engine',
     allowedOrigin: process.env.FRONTEND_URL || 'http://localhost:5173',
   });
 });
 
 app.listen(PORT, () => {
-  console.log(`Inclusion Preflight API running on http://localhost:${PORT}`);
+  console.log(`AccessWise API running on http://localhost:${PORT}`);
 });

@@ -1,11 +1,43 @@
-# Deployment Guide
+# AccessWise Deployment Guide
+
+## Where the current changes are
+
+The product changes are already inside this project:
+
+- `frontend/src/App.jsx`
+- `frontend/src/components/AuditWorkspace.jsx`
+- `frontend/src/components/FindingsPanel.jsx`
+- `frontend/src/components/KnowledgeRail.jsx`
+- `backend/utils/analysisEngine.js`
+- `backend/controllers/biasController.js`
+- `backend/utils/historyStore.js`
+- `backend/server.js`
+
+These files now use the `AccessWise` product direction and the inclusive service audit logic.
 
 ## Product architecture
 
 - `frontend/` is the Vite React application.
 - `backend/` is the Express API.
 - The product does not require an external AI service to function.
-- Review history is stored by the backend and exposed through the API.
+- Audit history is stored by the backend and exposed through the API.
+
+## Naming alignment
+
+Inside the codebase, the project is now aligned to `AccessWise`.
+
+You still need to rename these manually outside the codebase if you want full consistency:
+
+1. GitHub repository name
+2. Vercel project name
+3. Railway project name
+4. Any public deployment URLs
+
+Suggested names:
+
+- Repo: `accesswise`
+- Frontend project: `accesswise-frontend`
+- Backend project: `accesswise-api`
 
 ## Environment variables
 
@@ -49,8 +81,8 @@ Expected health response:
 
 ```json
 {
-  "status": "Inclusion Preflight API is running",
-  "analyzer": "inclusion-preflight-rules-engine",
+  "status": "AccessWise inclusive audit API is running",
+  "analyzer": "accesswise-inclusive-service-engine",
   "allowedOrigin": "http://localhost:5173"
 }
 ```
@@ -66,14 +98,10 @@ Expected health response:
 ## Post-deploy checks
 
 1. `GET /api/health` responds from the backend.
-2. The frontend can load review history from `/api/bias/history`.
-3. Running a preflight review returns a report from `/api/bias/analyze`.
+2. The frontend can load audit history from `/api/bias/history`.
+3. Running an inclusive audit returns a report from `/api/bias/analyze`.
 4. Aggregate stats load from `/api/bias/stats`.
-5. Editorial guidance loads from `/api/bias/education`.
-
-## CI
-
-The workflow in `.github/workflows/deploy.yml` verifies backend dependency install, backend syntax checks, and frontend production build on pushes to `main`.
+5. Inclusion guidance loads from `/api/bias/education`.
 
 ## Troubleshooting
 

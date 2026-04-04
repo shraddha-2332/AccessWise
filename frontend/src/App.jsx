@@ -9,7 +9,7 @@ function App() {
   const [history, setHistory] = useState([]);
   const [stats, setStats] = useState(null);
   const [education, setEducation] = useState(null);
-  const [health, setHealth] = useState('Connecting to review engine');
+  const [health, setHealth] = useState('Connecting to inclusive audit engine');
 
   useEffect(() => {
     const boot = async () => {
@@ -52,9 +52,9 @@ function App() {
     setHistory((current) => {
       const next = [record, ...current.filter((item) => item.id !== record.id)].slice(0, 8);
       const reviews = next.length;
-      const blocked = next.filter((entry) => entry.result?.releaseDecision === 'Block before publish').length;
-      const needsReview = next.filter((entry) => entry.result?.releaseDecision === 'Needs human review').length;
-      const ready = next.filter((entry) => entry.result?.releaseDecision === 'Ready with minor edits').length;
+      const blocked = next.filter((entry) => entry.result?.releaseDecision === 'Block before launch').length;
+      const needsReview = next.filter((entry) => entry.result?.releaseDecision === 'Needs inclusive redesign').length;
+      const ready = next.filter((entry) => entry.result?.releaseDecision === 'Ready with improvements').length;
       const averageRiskScore =
         reviews === 0
           ? 0
@@ -91,13 +91,54 @@ function App() {
       <header className="topbar">
         <div>
           <p className="kicker">Trust Intelligence Platform</p>
-          <h1>Inclusion Preflight</h1>
+          <h1>AccessWise</h1>
           <p className="subtitle">
-            A publication gate for hiring, policy, marketing, education, and product copy.
+            A web application that audits essential digital services for accessibility, clarity,
+            documentation burden, and first-time-user friction before launch.
           </p>
         </div>
         <div className="status-chip">{health}</div>
       </header>
+
+      <section className="showcase">
+        <article className="showcase-panel showcase-story">
+          <p className="kicker">Why it matters</p>
+          <h2>Critical services should not fail people at the instruction layer.</h2>
+          <p>
+            AccessWise helps teams catch exclusion before launch by reviewing the exact copy, notices,
+            and workflow guidance that shape whether someone can finish a service successfully.
+          </p>
+        </article>
+
+        <article className="showcase-panel">
+          <p className="kicker">Built for</p>
+          <div className="tag-cloud">
+            <span>Scholarship portals</span>
+            <span>Hospital bookings</span>
+            <span>Job applications</span>
+            <span>Civic services</span>
+            <span>Education platforms</span>
+          </div>
+        </article>
+
+        <article className="showcase-panel">
+          <p className="kicker">What judges see fast</p>
+          <div className="signal-list">
+            <div>
+              <strong>Real problem</strong>
+              <p>Digital exclusion in essential services</p>
+            </div>
+            <div>
+              <strong>Clear workflow</strong>
+              <p>Audit, explain, prioritize, improve</p>
+            </div>
+            <div>
+              <strong>Product potential</strong>
+              <p>Works across public and high-stakes platforms</p>
+            </div>
+          </div>
+        </article>
+      </section>
 
       <main className="layout">
         <AuditWorkspace history={history} stats={stats} onSaved={handleNewRecord} apiUrl={apiUrl} />

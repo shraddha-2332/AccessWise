@@ -1,7 +1,7 @@
 {
-  "name": "bias-audit-platform",
+  "name": "accesswise-platform",
   "version": "1.0.0",
-  "description": "BiasAudit - Hidden Bias Detector Platform",
+  "description": "AccessWise - Inclusive service audit platform for essential digital services",
   "main": "backend/server.js",
   "type": "module",
   "engines": {
@@ -14,8 +14,9 @@
     "dev": "cd backend && npm run dev"
   },
   "keywords": [
-    "bias-detection",
-    "ai",
+    "inclusive-design",
+    "accessibility",
+    "frontend",
     "hackathon"
   ],
   "author": "",
