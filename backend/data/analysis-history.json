@@ -1,0 +1,120 @@
+[
+  {
+    "id": "1775298311591",
+    "timestamp": "2026-04-04T10:25:11.591Z",
+    "contentType": "healthcare",
+    "audience": "Patients, caregivers, and people needing guided help",
+    "intent": "Inclusive service audit before launch",
+    "textPreview": "Patients must complete the appointment request online without assistance. Normal users should finish",
+    "originalText": "Patients must complete the appointment request online without assistance. Normal users should finish this form quickly, and elderly people are expected to arrange their own help if they cannot understand the medical terms.",
+    "result": {
+      "overallRiskScore": 100,
+      "releaseDecision": "Block before launch",
+      "executiveSummary": "This service flow raises 4 inclusion issues across 2 risk areas. The strongest barriers are Accessibility support and Plain language.",
+      "findings": [
+        {
+          "id": "access-needs-54",
+          "category": "Accessibility support",
+          "severity": "high",
+          "title": "The flow assumes every user can navigate the service without support",
+          "trigger": "without assistance",
+          "evidence": "Patients must complete the appointment request online without assistance.",
+          "whyItMatters": "Essential digital services should anticipate disability, low confidence, caregiver needs, and translation or support requirements.",
+          "stakeholderImpact": "People who need accommodations or clarification may feel unwelcome before they even begin the process.",
+          "recommendedText": "Mention help channels, accommodations, assistive options, and alternative completion paths in the service instructions."
+        },
+        {
+          "id": "access-needs-74",
+          "category": "Accessibility support",
+          "severity": "high",
+          "title": "The flow assumes every user can navigate the service without support",
+          "trigger": "Normal users",
+          "evidence": "Normal users should finish this form quickly, and elderly people are expected to arrange their own help if they cannot understand the medical terms.",
+          "whyItMatters": "Essential digital services should anticipate disability, low confidence, caregiver needs, and translation or support requirements.",
+          "stakeholderImpact": "People who need accommodations or clarification may feel unwelcome before they even begin the process.",
+          "recommendedText": "Mention help channels, accommodations, assistive options, and alternative completion paths in the service instructions."
+        },
+        {
+          "id": "access-needs-124",
+          "category": "Accessibility support",
+          "severity": "high",
+          "title": "The flow assumes every user can navigate the service without support",
+          "trigger": "elderly people are expected",
+          "evidence": "Normal users should finish this form quickly, and elderly people are expected to arrange their own help if they cannot understand the medical terms.",
+          "whyItMatters": "Essential digital services should anticipate disability, low confidence, caregiver needs, and translation or support requirements.",
+          "stakeholderImpact": "People who need accommodations or clarification may feel unwelcome before they even begin the process.",
+          "recommendedText": "Mention help channels, accommodations, assistive options, and alternative completion paths in the service instructions."
+        },
+        {
+          "id": "readability-barrier-208",
+          "category": "Plain language",
+          "severity": "medium",
+          "title": "The service relies on prior knowledge or advanced reading confidence",
+          "trigger": "medical terms",
+          "evidence": "Normal users should finish this form quickly, and elderly people are expected to arrange their own help if they cannot understand the medical terms.",
+          "whyItMatters": "Dense or insider language increases cognitive load and makes essential services harder to complete for new or stressed users.",
+          "stakeholderImpact": "Users may misunderstand a step, submit the wrong information, or give up because the process feels written for insiders.",
+          "recommendedText": "Use shorter instructions, explain specialized terms, and break the process into plain-language steps with examples."
+        }
+      ],
+      "stakeholderImpacts": [
+        {
+          "stakeholder": "Service users",
+          "level": "high",
+          "summary": "Some people may be locked out, confused, or discouraged before they complete the core task."
+        },
+        {
+          "stakeholder": "Trust and compliance",
+          "level": "high",
+          "summary": "The launch creates avoidable inclusion and reputation risk if shipped without remediation."
+        },
+        {
+          "stakeholder": "Operations and support",
+          "level": "high",
+          "summary": "Shipping as-is could create extra drop-off, support requests, manual follow-up, and preventable escalation."
+        }
+      ],
+      "personaSimulations": [
+        {
+          "persona": "First-time applicant",
+          "friction": "The flow feels written for insiders and may be hard to finish without repeated clarification.",
+          "riskLevel": "medium",
+          "recommendation": "Break the process into simpler steps and show what is required before asking users to submit."
+        },
+        {
+          "persona": "Low-bandwidth or shared-device user",
+          "friction": "The current copy does not strongly signal technical exclusion for this user.",
+          "riskLevel": "low",
+          "recommendation": "Add save-and-resume, reduce upload pressure, and provide fallback channels when digital completion fails."
+        },
+        {
+          "persona": "Patient needing support",
+          "friction": "This person may not trust the flow or may stop early because support and language clarity are not visible.",
+          "riskLevel": "high",
+          "recommendation": "Show support options early, reduce jargon, and make assisted completion feel normal."
+        }
+      ],
+      "actionPlan": [
+        "Rewrite the highest-friction instructions in plain language with shorter steps and calmer tone.",
+        "Add explicit support paths, accommodations, and fallback channels for users who cannot complete the default digital flow.",
+        "Review the launch with a human lens focused on first-time users, accessibility needs, and low-resource access."
+      ],
+      "rewrittenDraft": "Patients must complete the appointment request online Mention help channels, accommodations, assistive options, and alternative completion paths in the service instructions.. Mention help channels, accommodations, assistive options, and alternative completion paths in the service instructions. should finish this form quickly, and Mention help channels, accommodations, assistive options, and alternative completion paths in the service instructions. to arrange their own help if they cannot understand the Use shorter instructions, explain specialized terms, and break the process into plain-language steps with examples..",
+      "reviewChecklist": [
+        "Could a first-time user finish the service without prior insider knowledge?",
+        "Are support channels, accommodations, and alternative paths clearly visible?",
+        "Does the language avoid shame, pressure, and unnecessary complexity?",
+        "Would someone with low bandwidth, shared devices, or translation needs still have a fair path to completion?"
+      ],
+      "playbook": {
+        "title": "Healthcare booking and patient intake review",
+        "guidance": "Healthcare service text should be calm, medically understandable, and accessible to people who need help, translation, or more time."
+      },
+      "meta": {
+        "reviewedAt": "2026-04-04T10:25:11.591Z",
+        "analyzer": "accesswise-inclusive-service-engine",
+        "contentType": "healthcare"
+      }
+    }
+  }
+]

@@ -1,0 +1,169 @@
+import React, { useMemo, useState } from 'react';
+import { FiSearch } from 'react-icons/fi';
+
+const principles = [
+  {
+    title: 'Review task completion, not just compliance',
+    body: 'A good audit should reveal whether a person can actually finish the service, not simply whether the page contains technical issues.',
+  },
+  {
+    title: 'Write for first-time users',
+    body: 'Essential services fail most often when they assume confidence, prior knowledge, or endless patience from the user.',
+  },
+  {
+    title: 'Design support paths on purpose',
+    body: 'Translation, human assistance, and alternate completion channels should feel normal, not exceptional.',
+  },
+];
+
+const personas = [
+  {
+    title: 'First-time applicant',
+    body: 'Needs calm, explicit guidance and a clear sense of what happens next.',
+  },
+  {
+    title: 'Low-bandwidth user',
+    body: 'May be working from shared devices, intermittent connections, or short access windows.',
+  },
+  {
+    title: 'Translation-dependent user',
+    body: 'Needs straightforward wording and visible support cues instead of language-heavy gatekeeping.',
+  },
+];
+
+export function KnowledgeRail({ education, stats, history = [] }) {
+  const [historyFilter, setHistoryFilter] = useState('');
+
+  const filteredHistory = useMemo(() => {
+    const query = historyFilter.trim().toLowerCase();
+    if (!query) return history;
+    return history.filter((item) => {
+      const haystack = `${item.contentType} ${item.intent} ${item.audience} ${item.textPreview}`.toLowerCase();
+      return haystack.includes(query);
+    });
+  }, [history, historyFilter]);
+
+  return (
+    <aside className="knowledge-rail">
+      {stats ? (
+        <div className="panel">
+          <p className="kicker">Usage snapshot</p>
+          <h3>What recent audits are showing</h3>
+          <div className="metric-grid rail-metric-grid">
+            <div className="metric-card">
+              <span>Total audits</span>
+              <strong>{stats.reviews}</strong>
+            </div>
+            <div className="metric-card">
+              <span>Blocked</span>
+              <strong>{stats.blocked}</strong>
+            </div>
+            <div className="metric-card">
+              <span>Needs redesign</span>
+              <strong>{stats.needsReview}</strong>
+            </div>
+            <div className="metric-card">
+              <span>Average risk</span>
+              <strong>{stats.averageRiskScore}</strong>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      <div className="panel">
+        <div className="rail-header">
+          <div>
+            <p className="kicker">Recent audits</p>
+            <h3>Reopen previous reviews</h3>
+          </div>
+          <label className="search-field">
+            <FiSearch />
+            <input
+              value={historyFilter}
+              onChange={(event) => setHistoryFilter(event.target.value)}
+              placeholder="Search audits"
+            />
+          </label>
+        </div>
+        <div className="history-list">
+          {filteredHistory.length === 0 ? (
+            <div className="history-card empty">Run an audit to start building an inclusion trail.</div>
+          ) : (
+            filteredHistory.map((item) => (
+              <article key={item.id} className="history-card history-card-readonly">
+                <div className="history-header">
+                  <span>{item.contentType}</span>
+                  <strong>{item.result?.overallRiskScore ?? 0}</strong>
+                </div>
+                <p>{item.textPreview}...</p>
+              </article>
+            ))
+          )}
+        </div>
+      </div>
+
+      {stats ? (
+        <div className="panel">
+          <p className="kicker">Recent signals</p>
+          <h3>What your audit trail is showing</h3>
+          <div className="knowledge-list">
+            {(stats.topCategories || []).length === 0 ? (
+              <article className="knowledge-card">
+                <h4>No repeated barrier yet</h4>
+                <p>Once more audits are completed, this area will show the patterns that most often block real users.</p>
+              </article>
+            ) : (
+              stats.topCategories.map((item) => (
+                <article key={item.category} className="knowledge-card">
+                  <h4>{item.category}</h4>
+                  <p>{item.count} findings across recent audits.</p>
+                </article>
+              ))
+            )}
+          </div>
+        </div>
+      ) : null}
+
+      <div className="panel">
+        <p className="kicker">Core principles</p>
+        <h3>How to read the product correctly</h3>
+        <div className="knowledge-list">
+          {principles.map((item) => (
+            <article key={item.title} className="knowledge-card">
+              <h4>{item.title}</h4>
+              <p>{item.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <div className="panel">
+        <p className="kicker">Protected users</p>
+        <h3>Who this audit keeps in view</h3>
+        <div className="knowledge-list">
+          {personas.map((item) => (
+            <article key={item.title} className="knowledge-card">
+              <h4>{item.title}</h4>
+              <p>{item.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      {education ? (
+        <div className="panel">
+          <p className="kicker">Practical guidance</p>
+          <h3>Rules the system is enforcing</h3>
+          <div className="knowledge-list">
+            {education.guides.map((item) => (
+              <article key={item.id} className="knowledge-card">
+                <h4>{item.title}</h4>
+                <p>{item.content}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </aside>
+  );
+}

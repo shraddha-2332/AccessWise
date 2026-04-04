@@ -1,0 +1,24 @@
+{
+  "name": "accesswise-platform",
+  "version": "1.0.0",
+  "description": "AccessWise - Inclusive service audit platform for essential digital services",
+  "main": "backend/server.js",
+  "type": "module",
+  "engines": {
+    "node": "18.x"
+  },
+  "scripts": {
+    "start": "cd backend && node server.js",
+    "install": "npm install --prefix backend",
+    "postinstall": "echo 'Backend dependencies installed'",
+    "dev": "cd backend && npm run dev"
+  },
+  "keywords": [
+    "inclusive-design",
+    "accessibility",
+    "frontend",
+    "hackathon"
+  ],
+  "author": "",
+  "license": "MIT"
+}
