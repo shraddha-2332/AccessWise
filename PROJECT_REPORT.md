@@ -171,7 +171,7 @@ AccessWise helps teams identify exclusion before launch instead of after user co
 
 ### 1. GitHub Repository
 ```text
-https://github.com/shraddha-2332/accesswise
+https://github.com/shraddha-2332/AccessWise.git
 ```
 
 ### 2. Project Documentation
@@ -181,9 +181,10 @@ https://github.com/shraddha-2332/accesswise
 - Demo script
 
 ### 3. Deployed Application
-- Frontend on Vercel
-- Backend on Railway
-- Live URLs to be updated after final rename/alignment
+- Frontend on Vercel:
+  `https://accesswise-frontend-shraddha-2332s-projects.vercel.app`
+- Backend on Railway:
+  `https://accesswise-production.up.railway.app`
 
 ### 4. Demo Video (3-5 minutes)
 - Show homepage and value proposition

@@ -121,6 +121,12 @@ npm run build
 
 See `DEPLOYMENT_GUIDE.md` for Railway + Vercel setup.
 
+Live backend:
+- `https://accesswise-production.up.railway.app`
+
+Live frontend:
+- `https://accesswise-frontend-shraddha-2332s-projects.vercel.app`
+
 ## Current limitations
 
 - The audits are powered by deterministic rules, so nuanced cases still benefit from human review.

@@ -22,33 +22,28 @@ These files now use the `AccessWise` product direction and the inclusive service
 - The product does not require an external AI service to function.
 - Audit history is stored by the backend and exposed through the API.
 
-## Naming alignment
+## Live project links
 
-Inside the codebase, the project is now aligned to `AccessWise`.
+- GitHub: `https://github.com/shraddha-2332/AccessWise.git`
+- Railway backend: `https://accesswise-production.up.railway.app`
+- Vercel frontend project: `accesswise-frontend`
 
-You still need to rename these manually outside the codebase if you want full consistency:
+Current frontend domains on Vercel:
 
-1. GitHub repository name
-2. Vercel project name
-3. Railway project name
-4. Any public deployment URLs
-
-Suggested names:
-
-- Repo: `accesswise`
-- Frontend project: `accesswise-frontend`
-- Backend project: `accesswise-api`
+- `https://accesswise-frontend-shraddha-2332s-projects.vercel.app`
+- `https://accesswise-frontend-git-main-shraddha-2332s-projects.vercel.app`
+- `https://bias-audit-platform.vercel.app`
 
 ## Environment variables
 
 ### Backend
 
 - `PORT=5000`
-- `FRONTEND_URL=https://your-frontend-domain.vercel.app`
+- `FRONTEND_URL=https://accesswise-frontend-shraddha-2332s-projects.vercel.app`
 
 ### Frontend
 
-- `VITE_API_URL=https://your-backend-domain.up.railway.app`
+- `VITE_API_URL=https://accesswise-production.up.railway.app`
 
 ## Local run
 
@@ -83,7 +78,7 @@ Expected health response:
 {
   "status": "AccessWise inclusive audit API is running",
   "analyzer": "accesswise-inclusive-service-engine",
-  "allowedOrigin": "http://localhost:5173"
+  "allowedOrigin": "https://accesswise-frontend-shraddha-2332s-projects.vercel.app"
 }
 ```
 
