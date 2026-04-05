@@ -133,7 +133,7 @@ Live frontend:
 - History is stored locally in the backend data store, not a shared database.
 - Authentication and team-level permissions are not implemented yet.
 
-## Next good upgrades
+## Future Implementations
 
 - Persona-based audit modes for users with low vision, low bandwidth, or translation needs.
 - Shared database-backed history and team workspaces.
