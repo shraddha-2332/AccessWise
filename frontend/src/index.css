@@ -828,3 +828,37 @@ textarea {
     font-size: 2.4rem;
   }
 }
+
+.verdict-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.verdict-card {
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 16px 18px;
+}
+
+.verdict-card span {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  color: #9ecae4;
+}
+
+.verdict-card strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #eef5fb;
+}
+
+.verdict-card-subtle {
+  background: rgba(255, 255, 255, 0.03);
+}

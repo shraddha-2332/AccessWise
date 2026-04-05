@@ -18,6 +18,27 @@ export function FindingsPanel({ result, metrics, originalText, onExport, onExpor
     'Ready with improvements': 'decision-ready',
   }[releaseDecision] || 'decision-neutral';
 
+  const categoryCounts = findings.reduce((accumulator, item) => {
+    const key = item.category || 'General risk';
+    accumulator[key] = (accumulator[key] || 0) + 1;
+    return accumulator;
+  }, {});
+
+  const topCategories = Object.entries(categoryCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 2)
+    .map(([category]) => category);
+
+  const headlineReason =
+    findings.length === 0
+      ? 'No major barriers detected in the current rule set.'
+      : topCategories.length === 1
+        ? `Primary risk detected: ${topCategories[0]}.`
+        : `Primary risks detected: ${topCategories.join(' and ')}.`;
+
+  const engineNote =
+    'Explainable MVP engine: AccessWise uses deterministic audit rules for consistent launch decisions and demo-safe review flows.';
+
   return (
     <section className="results">
       <div className={`panel decision-panel ${decisionClass}`}>
@@ -43,6 +64,17 @@ export function FindingsPanel({ result, metrics, originalText, onExport, onExpor
               <FiDownload />
               Export json
             </button>
+          </div>
+        </div>
+
+        <div className="verdict-strip">
+          <div className="verdict-card">
+            <span>Top reason for verdict</span>
+            <strong>{headlineReason}</strong>
+          </div>
+          <div className="verdict-card verdict-card-subtle">
+            <span>Engine note</span>
+            <strong>{engineNote}</strong>
           </div>
         </div>
 
