@@ -114,6 +114,38 @@ const capabilityChecks = [
   'Unsafe, hostile, deceptive, or malicious wording',
 ];
 
+function normalizeAuditResult(rawResult, originalText) {
+  const safeResult = rawResult || {};
+  return {
+    releaseDecision: safeResult.releaseDecision || 'Audit complete',
+    overallRiskScore: typeof safeResult.overallRiskScore === 'number' ? safeResult.overallRiskScore : 0,
+    executiveSummary:
+      safeResult.executiveSummary || 'The audit completed, but the live backend returned a partial result payload.',
+    findings: Array.isArray(safeResult.findings) ? safeResult.findings : [],
+    stakeholderImpacts: Array.isArray(safeResult.stakeholderImpacts) ? safeResult.stakeholderImpacts : [],
+    personaSimulations: Array.isArray(safeResult.personaSimulations) ? safeResult.personaSimulations : [],
+    actionPlan: Array.isArray(safeResult.actionPlan) ? safeResult.actionPlan : [],
+    reviewChecklist: Array.isArray(safeResult.reviewChecklist) ? safeResult.reviewChecklist : [],
+    rewrittenDraft: safeResult.rewrittenDraft || originalText || 'No rewritten draft available yet.',
+    playbook: safeResult.playbook || null,
+    meta: safeResult.meta || {},
+  };
+}
+
+function normalizeAuditRecord(rawRecord, safeResult, fallback) {
+  const safeRecord = rawRecord || {};
+  return {
+    id: safeRecord.id || Date.now().toString(),
+    timestamp: safeRecord.timestamp || new Date().toISOString(),
+    contentType: safeRecord.contentType || fallback.contentType,
+    audience: safeRecord.audience || fallback.audience,
+    intent: safeRecord.intent || fallback.intent,
+    textPreview: safeRecord.textPreview || fallback.text.slice(0, 100),
+    originalText: safeRecord.originalText || fallback.text,
+    result: safeResult,
+  };
+}
+
 export function AuditWorkspace({ onSaved, apiUrl }) {
   const [contentType, setContentType] = useState('scholarship');
   const [audience, setAudience] = useState('Students, applicants, citizens, and first-time digital users');
@@ -128,9 +160,9 @@ export function AuditWorkspace({ onSaved, apiUrl }) {
   const summaryMetrics = useMemo(() => {
     if (!result) return null;
     return [
-      { label: 'Decision', value: result.releaseDecision },
-      { label: 'Risk score', value: String(result.overallRiskScore) },
-      { label: 'Issues found', value: String((result.findings || []).length) },
+      { label: 'Decision', value: result.releaseDecision || 'Audit complete' },
+      { label: 'Risk score', value: String(result.overallRiskScore ?? 0) },
+      { label: 'Issues found', value: String(Array.isArray(result.findings) ? result.findings.length : 0) },
       { label: 'Audit engine', value: 'AccessWise' },
     ];
   }, [result]);
@@ -149,9 +181,18 @@ export function AuditWorkspace({ onSaved, apiUrl }) {
         audience,
         intent,
       });
-      setResult(response.data.data);
-      setRecord(response.data.record);
-      onSaved?.(response.data.record);
+
+      const safeResult = normalizeAuditResult(response.data?.data, text);
+      const safeRecord = normalizeAuditRecord(response.data?.record, safeResult, {
+        contentType,
+        audience,
+        intent,
+        text,
+      });
+
+      setResult(safeResult);
+      setRecord(safeRecord);
+      onSaved?.(safeRecord);
       addToast('Audit complete. Review the decision, impacted personas, and next actions.', 'success');
     } catch (error) {
       addToast(error.response?.data?.error || 'Audit failed. Check the backend.', 'error');
@@ -173,31 +214,33 @@ export function AuditWorkspace({ onSaved, apiUrl }) {
 
   const exportMarkdown = () => {
     if (!record || !result) return;
+    const safeActionPlan = Array.isArray(result.actionPlan) ? result.actionPlan : [];
+    const safeFindings = Array.isArray(result.findings) ? result.findings : [];
+
     const markdown = [
       `# AccessWise Inclusive Service Audit Report`,
       ``,
-      `- Service decision: ${result.releaseDecision}`,
-      `- Risk score: ${result.overallRiskScore}`,
+      `- Service decision: ${result.releaseDecision || 'Audit complete'}`,
+      `- Risk score: ${result.overallRiskScore ?? 0}`,
       `- Service track: ${record.contentType}`,
       `- Audience: ${record.audience}`,
       `- Intent: ${record.intent}`,
       ``,
       `## Executive summary`,
-      result.executiveSummary,
+      result.executiveSummary || 'Audit completed with partial data.',
       ``,
       `## Action plan`,
-      ...((result.actionPlan || []).map((item) => `- ${item}`)),
+      ...(safeActionPlan.map((item) => `- ${item}`)),
       ``,
       `## Findings`,
-      ...((result.findings || []).length
-        ? (result.findings || []).map(
-            (item) =>
-              `- ${item.category} (${item.severity}): "${item.trigger}" -> ${item.recommendedText}`
+      ...(safeFindings.length
+        ? safeFindings.map(
+            (item) => `- ${item.category} (${item.severity}): "${item.trigger}" -> ${item.recommendedText}`
           )
         : ['- No major findings']),
       ``,
       `## Suggested revision`,
-      result.rewrittenDraft,
+      result.rewrittenDraft || text,
     ].join('\n');
 
     const blob = new Blob([markdown], { type: 'text/markdown' });
