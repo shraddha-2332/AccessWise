@@ -16,6 +16,7 @@ const configuredOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173')
 const isAllowedOrigin = (origin) => {
   if (!origin) return true;
   if (configuredOrigins.includes(origin)) return true;
+  if (origin === 'https://accesswise.vercel.app') return true;
 
   return /^https:\/\/accesswise-frontend(?:-[a-z0-9-]+)?-shraddha-2332s-projects\.vercel\.app$/i.test(origin);
 };
@@ -49,3 +50,4 @@ app.get('/api/health', (req, res) => {
 app.listen(PORT, () => {
   console.log(`AccessWise API running on http://localhost:${PORT}`);
 });
+
