@@ -105,6 +105,32 @@ const ISSUE_RULES = [
     saferAlternative:
       'Use supportive language that normalizes questions, orientation, and step-by-step guidance.',
   },
+  {
+    id: 'malicious-intent',
+    category: 'Malicious or adversarial intent',
+    severity: 'high',
+    patterns: [/\b(hacker|hack|exploit|bypass|phishing|malware|ransomware|steal data|steal money|fraud|scam|attack the system|break into|ddos)\b/gi],
+    title: 'The content signals malicious, deceptive, or adversarial intent',
+    whyItMatters:
+      'Public-facing service content should never normalize cyber abuse, fraud, deception, or instructions that undermine safety and trust.',
+    stakeholderImpact:
+      'Users, staff, and systems could be exposed to security risk, reputational damage, or direct harm if malicious wording is allowed into a live flow.',
+    saferAlternative:
+      'Replace the text with a legitimate, user-safe instruction that supports secure access, clear identity verification, and lawful service use.',
+  },
+  {
+    id: 'hostile-language',
+    category: 'Unsafe or hostile language',
+    severity: 'high',
+    patterns: [/\b(i hate you|kill|destroy|attack you|threaten|abuse users|harass|terrorize|hurt people|violent)\b/gi],
+    title: 'The content contains hostile or threatening language',
+    whyItMatters:
+      'Hostile language breaks trust immediately and is unacceptable in systems that people rely on for essential information or services.',
+    stakeholderImpact:
+      'People may feel unsafe, targeted, or manipulated, which can create serious product, policy, and brand risk.',
+    saferAlternative:
+      'Use neutral, respectful wording focused on lawful actions, user safety, and clear next-step guidance.',
+  },
 ];
 
 const severityWeight = { low: 12, medium: 22, high: 34 };
@@ -143,6 +169,10 @@ function rewriteDraft(text, findings) {
 }
 
 function buildStakeholderImpacts(findings) {
+  const hasCriticalTrustRisk = findings.some((item) =>
+    ['Accessibility support', 'Language inclusion', 'Malicious or adversarial intent', 'Unsafe or hostile language'].includes(item.category)
+  );
+
   return [
     {
       stakeholder: 'Service users',
@@ -150,20 +180,15 @@ function buildStakeholderImpacts(findings) {
       summary:
         findings.length === 0
           ? 'The service copy is unlikely to block the intended audience based on the current rule set.'
-          : 'Some people may be locked out, confused, or discouraged before they complete the core task.',
+          : 'Some people may be locked out, confused, discouraged, or directly exposed to unsafe content before they complete the core task.',
     },
     {
       stakeholder: 'Trust and compliance',
-      level:
-        findings.some((item) => item.category === 'Accessibility support' || item.category === 'Language inclusion')
-          ? 'high'
-          : findings.length
-            ? 'medium'
-            : 'low',
+      level: hasCriticalTrustRisk ? 'high' : findings.length ? 'medium' : 'low',
       summary:
         findings.length === 0
           ? 'No major trust or accessibility signals were detected.'
-          : 'The launch creates avoidable inclusion and reputation risk if shipped without remediation.',
+          : 'The launch creates avoidable inclusion, safety, and reputation risk if shipped without remediation.',
     },
     {
       stakeholder: 'Operations and support',
@@ -171,7 +196,7 @@ function buildStakeholderImpacts(findings) {
       summary:
         findings.length === 0
           ? 'Minimal remediation effort should be required.'
-          : 'Shipping as-is could create extra drop-off, support requests, manual follow-up, and preventable escalation.',
+          : 'Shipping as-is could create extra drop-off, support requests, manual follow-up, incident response, and preventable escalation.',
     },
   ];
 }
@@ -179,32 +204,39 @@ function buildStakeholderImpacts(findings) {
 function buildPersonaSimulations(findings, contentType) {
   const hasCategory = (category) => findings.some((item) => item.category === category);
   const hasHighSeverity = findings.some((item) => item.severity === 'high');
+  const hasUnsafeIntent = hasCategory('Malicious or adversarial intent') || hasCategory('Unsafe or hostile language');
 
   const personas = [
     {
       persona: 'First-time applicant',
-      friction: hasCategory('Plain language') || hasCategory('Documentation burden')
-        ? 'The flow feels written for insiders and may be hard to finish without repeated clarification.'
-        : 'The flow is understandable enough for a new user with basic orientation.',
-      riskLevel: hasCategory('Plain language') || hasCategory('Documentation burden') ? 'medium' : 'low',
-      recommendation: 'Break the process into simpler steps and show what is required before asking users to submit.',
+      friction: hasUnsafeIntent
+        ? 'The wording feels unsafe or illegitimate, so this user may abandon the service immediately.'
+        : hasCategory('Plain language') || hasCategory('Documentation burden')
+          ? 'The flow feels written for insiders and may be hard to finish without repeated clarification.'
+          : 'The flow is understandable enough for a new user with basic orientation.',
+      riskLevel: hasUnsafeIntent ? 'high' : hasCategory('Plain language') || hasCategory('Documentation burden') ? 'medium' : 'low',
+      recommendation: 'Use safe, legitimate service language and break the process into simpler steps with visible support cues.',
     },
     {
       persona: 'Low-bandwidth or shared-device user',
-      friction: hasCategory('Deadline pressure') || hasCategory('Documentation burden')
-        ? 'Rigid timing, large document expectations, or one-session completion rules can block this user completely.'
-        : 'The current copy does not strongly signal technical exclusion for this user.',
-      riskLevel: hasCategory('Deadline pressure') || hasCategory('Documentation burden') ? 'high' : 'low',
-      recommendation: 'Add save-and-resume, reduce upload pressure, and provide fallback channels when digital completion fails.',
+      friction: hasUnsafeIntent
+        ? 'Unsafe wording makes the service feel untrustworthy before this user can even evaluate whether the flow is real.'
+        : hasCategory('Deadline pressure') || hasCategory('Documentation burden')
+          ? 'Rigid timing, large document expectations, or one-session completion rules can block this user completely.'
+          : 'The current copy does not strongly signal technical exclusion for this user.',
+      riskLevel: hasUnsafeIntent || hasCategory('Deadline pressure') || hasCategory('Documentation burden') ? 'high' : 'low',
+      recommendation: 'Add trust-building cues, reduce upload pressure, and provide fallback channels when digital completion fails.',
     },
     {
       persona: contentType === 'healthcare' ? 'Patient needing support' : 'Translation-dependent user',
       friction:
-        hasCategory('Language inclusion') || hasCategory('Accessibility support')
-          ? 'This person may not trust the flow or may stop early because support and language clarity are not visible.'
-          : 'This user appears to have a workable path if support remains visible in the final interface.',
+        hasUnsafeIntent
+          ? 'This person may perceive the content as deceptive, threatening, or unsafe and stop immediately.'
+          : hasCategory('Language inclusion') || hasCategory('Accessibility support')
+            ? 'This person may not trust the flow or may stop early because support and language clarity are not visible.'
+            : 'This user appears to have a workable path if support remains visible in the final interface.',
       riskLevel:
-        hasCategory('Language inclusion') || hasCategory('Accessibility support')
+        hasUnsafeIntent || hasCategory('Language inclusion') || hasCategory('Accessibility support')
           ? 'high'
           : hasHighSeverity
             ? 'medium'
@@ -246,8 +278,11 @@ export function analyzeText({ text, contentType = 'scholarship' }) {
   });
 
   const totalRisk = Math.min(100, findings.reduce((sum, item) => sum + severityWeight[item.severity], 0));
+  const hasUnsafeIntent = findings.some((item) =>
+    ['Malicious or adversarial intent', 'Unsafe or hostile language'].includes(item.category)
+  );
   const releaseDecision =
-    findings.some((item) => item.severity === 'high') || totalRisk >= 65
+    hasUnsafeIntent || findings.some((item) => item.severity === 'high') || totalRisk >= 65
       ? 'Block before launch'
       : totalRisk >= 28
         ? 'Needs inclusive redesign'
@@ -262,25 +297,34 @@ export function analyzeText({ text, contentType = 'scholarship' }) {
     executiveSummary:
       findings.length === 0
         ? `The service copy is broadly aligned with the ${playbook.title.toLowerCase()} playbook and does not show major inclusion barriers.`
-        : `This service flow raises ${findings.length} inclusion issue${findings.length > 1 ? 's' : ''} across ${issueMix.length} risk area${issueMix.length > 1 ? 's' : ''}. The strongest barriers are ${issueMix.slice(0, 2).join(' and ')}.`,
+        : hasUnsafeIntent
+          ? `This text raises immediate safety and trust concerns. AccessWise detected malicious, hostile, or adversarial language that should be blocked before launch.`
+          : `This service flow raises ${findings.length} inclusion issue${findings.length > 1 ? 's' : ''} across ${issueMix.length} risk area${issueMix.length > 1 ? 's' : ''}. The strongest barriers are ${issueMix.slice(0, 2).join(' and ')}.`,
     findings,
     stakeholderImpacts: buildStakeholderImpacts(findings),
     personaSimulations: buildPersonaSimulations(findings, contentType),
-    actionPlan: findings.length
+    actionPlan: hasUnsafeIntent
       ? [
-          'Rewrite the highest-friction instructions in plain language with shorter steps and calmer tone.',
-          'Add explicit support paths, accommodations, and fallback channels for users who cannot complete the default digital flow.',
-          'Review the launch with a human lens focused on first-time users, accessibility needs, and low-resource access.',
+          'Block this content from release immediately and replace it with legitimate, user-safe service language.',
+          'Review the source of the wording for malicious intent, deception, or policy violations before continuing the workflow.',
+          'Add moderation or approval checks so unsafe text cannot enter future public-facing service flows.',
         ]
-      : [
-          'Keep the audit checklist in place for future service updates.',
-          'Validate with a domain reviewer if the service handles especially sensitive, regulated, or high-stakes decisions.',
-        ],
+      : findings.length
+        ? [
+            'Rewrite the highest-friction instructions in plain language with shorter steps and calmer tone.',
+            'Add explicit support paths, accommodations, and fallback channels for users who cannot complete the default digital flow.',
+            'Review the launch with a human lens focused on first-time users, accessibility needs, and low-resource access.',
+          ]
+        : [
+            'Keep the audit checklist in place for future service updates.',
+            'Validate with a domain reviewer if the service handles especially sensitive, regulated, or high-stakes decisions.',
+          ],
     rewrittenDraft: rewriteDraft(normalizedText, findings),
     reviewChecklist: [
       'Could a first-time user finish the service without prior insider knowledge?',
       'Are support channels, accommodations, and alternative paths clearly visible?',
-      'Does the language avoid shame, pressure, and unnecessary complexity?',
+      'Does the language avoid shame, pressure, unnecessary complexity, and hostile tone?',
+      'Does the text avoid malicious, deceptive, threatening, or adversarial intent?',
       'Would someone with low bandwidth, shared devices, or translation needs still have a fair path to completion?',
     ],
     playbook,
@@ -288,6 +332,7 @@ export function analyzeText({ text, contentType = 'scholarship' }) {
       reviewedAt: new Date().toISOString(),
       analyzer: 'accesswise-inclusive-service-engine',
       contentType,
+      hasUnsafeIntent,
     },
   };
 }

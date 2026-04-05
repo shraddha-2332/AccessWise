@@ -2,11 +2,21 @@ import React from 'react';
 import { FiAlertTriangle, FiCheckCircle, FiCopy, FiDownload, FiUsers } from 'react-icons/fi';
 
 export function FindingsPanel({ result, metrics, originalText, onExport, onExportMarkdown }) {
+  const findings = Array.isArray(result?.findings) ? result.findings : [];
+  const stakeholderImpacts = Array.isArray(result?.stakeholderImpacts) ? result.stakeholderImpacts : [];
+  const personaSimulations = Array.isArray(result?.personaSimulations) ? result.personaSimulations : [];
+  const actionPlan = Array.isArray(result?.actionPlan) ? result.actionPlan : [];
+  const reviewChecklist = Array.isArray(result?.reviewChecklist) ? result.reviewChecklist : [];
+  const safeMetrics = Array.isArray(metrics) ? metrics : [];
+  const releaseDecision = result?.releaseDecision || 'Audit complete';
+  const executiveSummary = result?.executiveSummary || 'The audit finished, but some result details were unavailable.';
+  const rewrittenDraft = result?.rewrittenDraft || originalText || 'No rewritten draft available yet.';
+
   const decisionClass = {
     'Block before launch': 'decision-block',
     'Needs inclusive redesign': 'decision-redesign',
     'Ready with improvements': 'decision-ready',
-  }[result.releaseDecision] || 'decision-neutral';
+  }[releaseDecision] || 'decision-neutral';
 
   return (
     <section className="results">
@@ -15,13 +25,13 @@ export function FindingsPanel({ result, metrics, originalText, onExport, onExpor
           <div>
             <p className="kicker">Launch decision</p>
             <div className="decision-heading">
-              <h3>{result.releaseDecision}</h3>
-              <span className="decision-pill">{result.releaseDecision}</span>
+              <h3>{releaseDecision}</h3>
+              <span className="decision-pill">{releaseDecision}</span>
             </div>
-            <p className="results-summary">{result.executiveSummary}</p>
+            <p className="results-summary">{executiveSummary}</p>
           </div>
           <div className="inline-actions">
-            <button type="button" className="ghost-button" onClick={async () => navigator.clipboard.writeText(result.rewrittenDraft)}>
+            <button type="button" className="ghost-button" onClick={async () => navigator.clipboard.writeText(rewrittenDraft)}>
               <FiCopy />
               Copy rewrite
             </button>
@@ -37,7 +47,7 @@ export function FindingsPanel({ result, metrics, originalText, onExport, onExpor
         </div>
 
         <div className="metric-grid">
-          {metrics.map((metric) => (
+          {safeMetrics.map((metric) => (
             <div key={metric.label} className="metric-card">
               <span>{metric.label}</span>
               <strong>{metric.value}</strong>
@@ -61,13 +71,13 @@ export function FindingsPanel({ result, metrics, originalText, onExport, onExpor
             <h4>Issues found</h4>
           </div>
           <div className="finding-list">
-            {result.findings.length === 0 ? (
+            {findings.length === 0 ? (
               <div className="finding-card success">
                 <strong>No major findings</strong>
                 <p>The service copy is in good shape based on the current rule set.</p>
               </div>
             ) : (
-              result.findings.map((item) => (
+              findings.map((item) => (
                 <article key={item.id} className={`finding-card severity-${item.severity}`}>
                   <div className="finding-head">
                     <span>{item.category}</span>
@@ -91,7 +101,11 @@ export function FindingsPanel({ result, metrics, originalText, onExport, onExpor
               <h4>Who is affected</h4>
             </div>
             <div className="impact-list">
-              {result.stakeholderImpacts.map((item) => (
+              {stakeholderImpacts.length === 0 ? (
+                <div className="impact-card">
+                  <p>Stakeholder impact details are not available for this audit response yet.</p>
+                </div>
+              ) : stakeholderImpacts.map((item) => (
                 <div key={item.stakeholder} className="impact-card">
                   <div className="finding-head">
                     <span>{item.stakeholder}</span>
@@ -109,7 +123,11 @@ export function FindingsPanel({ result, metrics, originalText, onExport, onExpor
               <h4>Persona simulation</h4>
             </div>
             <div className="impact-list">
-              {result.personaSimulations.map((item) => (
+              {personaSimulations.length === 0 ? (
+                <div className="impact-card persona-card">
+                  <p>Persona simulation is not available for this audit response yet.</p>
+                </div>
+              ) : personaSimulations.map((item) => (
                 <div key={item.persona} className="impact-card persona-card">
                   <div className="finding-head">
                     <span>{item.persona}</span>
@@ -128,13 +146,13 @@ export function FindingsPanel({ result, metrics, originalText, onExport, onExpor
               <h4>What to do next</h4>
             </div>
             <ul className="plain-list">
-              {result.actionPlan.map((item) => (
+              {actionPlan.map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
             <h5 className="subheading">Audit checklist</h5>
             <ul className="plain-list">
-              {result.reviewChecklist.map((item) => (
+              {reviewChecklist.map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
@@ -149,7 +167,7 @@ export function FindingsPanel({ result, metrics, originalText, onExport, onExpor
         </div>
         <div className="panel">
           <p className="kicker">Suggested improved version</p>
-          <pre className="text-block">{result.rewrittenDraft}</pre>
+          <pre className="text-block">{rewrittenDraft}</pre>
         </div>
       </div>
     </section>

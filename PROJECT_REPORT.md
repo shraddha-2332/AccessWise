@@ -99,8 +99,6 @@ AccessWise is an inclusive service audit web application that:
 - Easy deployment to Vercel + Railway
 - Good foundation for future AI or ML extensions
 
----
-
 ## AI / Intelligence Layer Used
 
 ### Current implementation
